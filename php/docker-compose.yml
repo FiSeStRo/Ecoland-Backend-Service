@@ -1,0 +1,30 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+  mariadb_php:
+    image: mariadb:latest
+    container_name: mariadb_php
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: maria123
+      MYSQL_DATABASE: mariadb
+      MYSQL_USER: maria
+      MYSQL_PASSWORD: maria123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql # Persist database data
+
+  redis_php:
+    image: redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+volumes:
+  mariadb_data:
+    driver: local
