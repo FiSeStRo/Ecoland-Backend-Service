@@ -15,12 +15,14 @@ import (
 type UserJson struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Email    string `json:"email"`
 }
 
 type User struct {
 	Id       int
 	Username string
 	Password []byte
+	Email    string
 }
 
 type SignInResponse struct {
@@ -102,15 +104,19 @@ func SignUp(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ok, err := UserExists(signUpUser.Username)
+	ue, err := UserExists(signUpUser.Username)
 	if err != nil {
 		http.Error(w, "couldn not search for Username", 400)
 		return
 	}
 
-	if ok {
+	if ue {
 		http.Error(w, "Username alreday exists", 400)
 		return
+	}
+
+	if !utils.IsEmail(signUpUser.Email) {
+		http.Error(w, "In valid email", http.StatusBadRequest)
 	}
 
 	bp, err := bcrypt.GenerateFromPassword([]byte(signUpUser.Password), bcrypt.MinCost)
@@ -123,6 +129,7 @@ func SignUp(w http.ResponseWriter, req *http.Request) {
 	newUser := User{
 		Username: signUpUser.Username,
 		Password: bp,
+		Email:    signUpUser.Email,
 	}
 
 	err = CreateUser(newUser)

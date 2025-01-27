@@ -64,6 +64,7 @@ func initialiseUserTable() {
 		id INT AUTO_INCREMENT PRIMARY KEY,
 		username VARCHAR(255) UNIQUE NOT NULL,
 		password VARCHAR(255) NOT NULL,
+		email VARCHAR(255) NOT NULL,
 		role INT,
 		time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		time_last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -148,8 +149,9 @@ func initaliseRelationTables() {
 	} else {
 		log.Println("def_rel_building_production Table created or already in place")
 	}
-	//ToDo: add id as pk
+
 	createRelBuildingDefProduction := `CREATE TABLE IF NOT EXISTS rel_buildng_def_production(
+	id INT  AUTO_INCREMENT PRIMARY KEY,
 	building_id INT NOT NULL,
 	production_id INT NOT NULL,
 	time_start TIMESTAMP NOT NULL,
