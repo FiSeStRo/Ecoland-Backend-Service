@@ -1,0 +1,22 @@
+services:
+  go-service:
+    build: .
+    ports:
+      - "8081:8081"
+  mariadb-service:
+    image: mariadb:latest
+    container_name: mariadb_go
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: maria123
+      MYSQL_DATABASE: mariadb
+      MYSQL_USER: maria
+      MYSQL_PASSWORD: maria123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql # Persist database data
+
+volumes:
+  mariadb_data:
+    driver: local

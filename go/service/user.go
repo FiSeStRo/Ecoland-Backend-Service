@@ -6,9 +6,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/FiSeStRo/EcoLand/authentication"
-	"github.com/FiSeStRo/EcoLand/database"
-	"github.com/FiSeStRo/EcoLand/utils"
+	"github.com/FiSeStRo/Ecoland-Backend-Service/authentication"
+	"github.com/FiSeStRo/Ecoland-Backend-Service/database"
+	"github.com/FiSeStRo/Ecoland-Backend-Service/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 

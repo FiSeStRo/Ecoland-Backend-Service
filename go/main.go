@@ -67,7 +67,7 @@ func main() {
 	// user
 	http.HandleFunc("/user/resources", service.GetUserResources)
 	http.HandleFunc("/", root)
-	http.ListenAndServe(":9090", nil)
+	http.ListenAndServe(":8081", nil)
 }
 
 // Root handles the functionality of the root rout
