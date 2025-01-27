@@ -7,7 +7,7 @@ The Backend is build both in php and go.
 
 ## Frontend Repository
 
-(Ecoland-Apps)[https://github.com/FiSeStRo/Ecoland-Apps]
+[Ecoland-Apps](https://github.com/FiSeStRo/Ecoland-Apps)
 
 ## Usage
 
@@ -16,5 +16,5 @@ The Backend is build both in php and go.
 
 ## API Documentation
 
-(Docs)[https://e04rd7wcgr.apidog.io]
-(OpenAPI)[/docs/openapi.yaml]
+[Docs](https://e04rd7wcgr.apidog.io)
+[OpenAPI](./docs/api/openapi.yaml)
