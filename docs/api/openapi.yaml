@@ -1,0 +1,857 @@
+openapi: 3.0.1
+info:
+  title: Ecoland
+  description: ''
+  version: 1.0.0
+tags: []
+paths:
+  /authentication/sign-in:
+    post:
+      summary: Sign-In
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+            example:
+              username: Jenna Hegmann-Abernathy
+              password: Q7UTH9Qrutv66MN
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                required:
+                  - accessToken
+                  - refreshToken
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                    accessToken: adipisicing laboris occaecat sunt
+                    refreshToken: aliquip in esse magna
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message_token:
+                    type: string
+                required:
+                  - code
+                  - message_token
+          headers: {}
+      security: []
+  /authentication/sign-up:
+    post:
+      summary: Sign-up
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message_token:
+                    type: string
+                required:
+                  - code
+                  - message_token
+          headers: {}
+      security: []
+  /authentication/refresh-token:
+    post:
+      summary: Refresh Token
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+              required:
+                - refreshToken
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                required:
+                  - accessToken
+                  - refreshToken
+          headers: {}
+      security: []
+  /user/resources:
+    get:
+      summary: Resources
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  money:
+                    type: number
+                  prestige:
+                    type: integer
+                required:
+                  - money
+                  - prestige
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                    money: 32.13
+                    prestige: 80864974
+          headers: {}
+      security: []
+  /user/changeUser:
+    post:
+      summary: ChangeUserDetails
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+  /buildings/details/{id}:
+    get:
+      summary: Building Details
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: id
+          in: path
+          description: building id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  name:
+                    type: string
+                    description: name
+                  type:
+                    type: object
+                    properties:
+                      def_id:
+                        type: integer
+                      token_name:
+                        type: string
+                    required:
+                      - def_id
+                      - token_name
+                  storage:
+                    properties:
+                      products:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            amount:
+                              type: integer
+                            capacity:
+                              type: integer
+                          required:
+                            - amount
+                            - capacity
+                    required:
+                      - products
+                    $ref: '#/components/schemas/Storage_Base'
+                  production: &ref_0
+                    $ref: '#/components/schemas/Production_Base'
+                required:
+                  - storage
+                  - production
+                  - id
+                  - name
+                  - type
+          headers: {}
+      security: []
+  /buildings/list:
+    get:
+      summary: All Buildings
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  buildings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: ID
+                        name:
+                          type: string
+                          description: name
+                        type:
+                          type: object
+                          properties:
+                            def_id:
+                              type: integer
+                            token_name:
+                              type: string
+                          required:
+                            - def_id
+                            - token_name
+                        production: *ref_0
+                      required:
+                        - production
+                        - id
+                        - name
+                        - type
+                required:
+                  - buildings
+          headers: {}
+      security: []
+  /buildings/construct:
+    post:
+      summary: Construct Building
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                def_id:
+                  type: integer
+                  description: ID
+                display_name:
+                  type: string
+              required:
+                - def_id
+                - display_name
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: New building ID
+                required:
+                  - id
+          headers: {}
+        '400':
+          description: If not enough money
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  description:
+                    type: string
+                  missing_money:
+                    type: number
+                required:
+                  - description
+                  - missing_money
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                required:
+                  - code
+                  - message
+          headers: {}
+      security: []
+  /buildings/constructionlist:
+    get:
+      summary: List of Possible Construction
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  buidlings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Construciton_Base'
+                required:
+                  - buidlings
+          headers: {}
+      security: []
+  /production/cancel/{id}:
+    delete:
+      summary: Cancel Production
+      deprecated: false
+      description: >-
+        Cancels current production for building with given id.
+
+        Completed cycles will yield the output products, production cycles not
+        yet started will return the input materials. Products from the currently
+        started cycles are lost.
+      tags: []
+      parameters:
+        - name: id
+          in: path
+          description: building id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+  /production/start/:
+    post:
+      summary: Start Production
+      deprecated: false
+      description: >-
+        Starts a production for the given building id. Type of production and
+        amount of cycles are provided. Input materials used are subtracted
+        immediately. Output products are added after completing the production
+        via internal GameManager.
+      tags: []
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                building_id:
+                  type: integer
+                  description: atm both via get and post
+                id:
+                  type: integer
+                  description: def_production_id
+                cycles:
+                  type: integer
+              required:
+                - id
+                - cycles
+                - building_id
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: new prodcution id
+                required:
+                  - id
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  message_token:
+                    type: string
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        missing_amount:
+                          type: integer
+                        id:
+                          type: integer
+                      required:
+                        - missing_amount
+                        - id
+                required:
+                  - message_token
+                  - products
+          headers: {}
+      security: []
+  /production/list/{id}:
+    get:
+      summary: List of possible Productions per Building
+      deprecated: false
+      description: List of possbile productions of the selected building
+      tags: []
+      parameters:
+        - name: id
+          in: path
+          description: building id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  token_name:
+                    type: string
+                  productions_in:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: ID
+                        token_name:
+                          type: string
+                        amount:
+                          type: string
+                      required:
+                        - amount
+                        - id
+                        - token_name
+                  productions_out:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: ID
+                        token_name:
+                          type: string
+                        amount:
+                          type: string
+                      required:
+                        - amount
+                        - id
+                        - token_name
+                  base_duration:
+                    type: integer
+                  cost:
+                    type: number
+                required:
+                  - id
+                  - token_name
+                  - productions_in
+                  - productions_out
+                  - base_duration
+                  - cost
+          headers: {}
+      security: []
+  /transportation/shipment/{id}:
+    post:
+      summary: Shipment
+      deprecated: false
+      description: Ship products from one building to the other
+      tags: []
+      parameters:
+        - name: id
+          in: path
+          description: id of the sending building
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                building_id:
+                  type: string
+                product_id:
+                  type: string
+                amount:
+                  type: string
+              required:
+                - building_id
+                - product_id
+                - amount
+              $ref: '#/components/schemas/Shipment_Base'
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  message_token:
+                    type: string
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        missing_amount:
+                          type: integer
+                        id:
+                          type: integer
+                      required:
+                        - missing_amount
+                        - id
+                required:
+                  - message_token
+                  - products
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                required:
+                  - code
+                  - message
+          headers: {}
+        x-400:Building does not Exist:
+          description: ''
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  message_token:
+                    type: string
+                  building_id:
+                    type: string
+                required:
+                  - message_token
+                  - building_id
+          headers: {}
+      security: []
+components:
+  schemas:
+    Storage_Base:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: ID
+              token_name:
+                type: string
+              amount:
+                type: integer
+              capacity:
+                type: integer
+            required:
+              - amount
+              - capacity
+              - id
+              - token_name
+      required:
+        - products
+    Product_Base:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID
+        token_name:
+          type: string
+      required:
+        - id
+        - token_name
+    Production_Base:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID
+          nullable: true
+        cycles:
+          type: object
+          properties:
+            total:
+              type: integer
+            completed:
+              type: integer
+          required:
+            - total
+            - completed
+        is_active:
+          type: boolean
+        time_end:
+          type: string
+          format: date-time
+        products_in: &ref_1
+          $ref: '#/components/schemas/ProductionsInOut_List'
+        products_out: *ref_1
+      required:
+        - id
+        - is_active
+        - time_end
+        - cycles
+        - products_in
+        - products_out
+    ProductionsInOut_List:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: ID
+          token_name:
+            type: string
+          amount:
+            type: object
+            properties:
+              total:
+                type: integer
+              current:
+                type: integer
+            required:
+              - total
+              - current
+        required:
+          - amount
+          - id
+          - token_name
+    Building_Base:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID
+        name:
+          type: string
+          description: name
+        type:
+          type: object
+          properties:
+            def_id:
+              type: integer
+            token_name:
+              type: string
+          required:
+            - def_id
+            - token_name
+      required:
+        - id
+        - name
+        - type
+    Construciton_Base:
+      type: object
+      properties:
+        building:
+          $ref: '#/components/schemas/Building_Base'
+        cost:
+          type: number
+      required:
+        - building
+        - cost
+    Shipment_Base:
+      type: object
+      properties:
+        building_from_id:
+          type: integer
+          description: id of sending building
+        building_to_id:
+          type: integer
+          description: id of receiving building
+        product_id:
+          type: integer
+        amount:
+          type: integer
+      required:
+        - building_from_id
+        - product_id
+        - amount
+        - building_to_id
+    Productions_Def:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID
+        token_name:
+          type: string
+        productions_in:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: ID
+              token_name:
+                type: string
+              amount:
+                type: string
+            required:
+              - amount
+              - id
+              - token_name
+        productions_out:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: ID
+              token_name:
+                type: string
+              amount:
+                type: string
+            required:
+              - amount
+              - id
+              - token_name
+        base_duration:
+          type: integer
+        cost:
+          type: number
+      required:
+        - id
+        - token_name
+        - productions_in
+        - productions_out
+        - base_duration
+        - cost
+  securitySchemes: {}
+servers: []
+security: {}
