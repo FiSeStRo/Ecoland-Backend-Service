@@ -1,0 +1,9 @@
+#This is the structure of Codeowners of this repo
+# any global changes
+* @FiSeStRo/Core
+
+# any go changes
+*.go @Finny_ST
+
+# any php changes
+*.php @nii42
