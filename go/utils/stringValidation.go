@@ -9,6 +9,9 @@ func IsEmail(email string) bool {
 		if v == '@' {
 			hasAt = true
 		}
+		if i == len(email)-1 && v == '@' {
+			return false
+		}
 	}
 	return hasAt
 }
