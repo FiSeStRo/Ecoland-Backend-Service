@@ -64,8 +64,12 @@ func main() {
 	http.HandleFunc("/buildings/construct", service.ConstructBuilding)
 	http.HandleFunc("/buildings/list", service.ListOfBuildings)
 
+	//production
+	http.HandleFunc("/production/list", service.ListOfProductions)
+
 	// user
 	http.HandleFunc("/user/resources", service.GetUserResources)
+
 	http.HandleFunc("/", root)
 	http.ListenAndServe(":8081", nil)
 }
