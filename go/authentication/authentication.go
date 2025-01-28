@@ -43,13 +43,11 @@ func CreateNewJWT(userId int, isRT bool) (string, error) {
 
 // ValidateJWT validates a given jwt and return the EcoUserClaims if valid
 func ValidateJWT(t string) (EcoUserClaims, error) {
-	log.Println("token", t)
 	vt, err := jwt.ParseWithClaims(t, &EcoUserClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return jWTKey, nil
 	})
 
 	isValid := err == nil && vt.Valid
-
 	if !isValid {
 		return EcoUserClaims{}, fmt.Errorf("jwt not valid %w", err)
 	}
