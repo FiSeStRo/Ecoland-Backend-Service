@@ -43,7 +43,7 @@ func ListOfProductions(w http.ResponseWriter, req *http.Request) {
 	rows, err := db.Query(`
 				SELECT rel.production_id, p.token_name, p.cost, p.base_duration 
 				FROM def_rel_building_production rel
-				JOIN def_production p ON rel.production_id
+				JOIN def_production p ON rel.production_id = p.id
 				WHERE rel.building_id = ?
 				`, buildingDefId)
 	if err != nil {
@@ -101,4 +101,106 @@ func ListOfProductions(w http.ResponseWriter, req *http.Request) {
 	}
 	utils.SetHeaderJson(w)
 	json.NewEncoder(w).Encode(productionList)
+}
+
+func StartProduction(w http.ResponseWriter, req *http.Request) {
+
+	type ReqBody struct {
+		Id         int `json:"id"`
+		BuildingId int `json:"building_id"`
+		Cycles     int `json:"cycles"`
+	}
+
+	if !utils.IsMethodPOST(w, req) {
+		return
+	}
+
+	claims, err := authentication.ValidateAuthentication(req)
+	if err != nil {
+		http.Error(w, "invalid token", http.StatusUnauthorized)
+		return
+	}
+	var body ReqBody
+	err = json.NewDecoder(req.Body).Decode(&body)
+	if err != nil {
+		http.Error(w, "invalid body", http.StatusBadRequest)
+		return
+	}
+	//check if building and userId exists and the building can produce the product
+
+	user, err := database.FindUserById(claims.UserId)
+
+	building, err := database.FindBuilding(body.BuildingId)
+	if err != nil {
+		http.Error(w, "no builfing found with this id", http.StatusBadRequest)
+		return
+	}
+	if building.UserId != user.Id {
+		http.Error(w, "no user with this building", http.StatusBadRequest)
+		return
+	}
+
+	productions, err := database.GetPossibleProductionsOfBuilding(body.BuildingId)
+	if err != nil {
+		http.Error(w, "couldn't find productions", http.StatusInternalServerError)
+	}
+
+	var prod database.DefProduction
+	for i := 0; i < len(productions); i++ {
+		if productions[i].Id == body.Id {
+			prod = productions[i]
+			break
+		}
+	}
+	userResources, err := database.GetUserResources(user.Id)
+	if err != nil {
+		http.Error(w, "no resources found", http.StatusBadRequest)
+	}
+
+	if prod.Cost > userResources.Money {
+		http.Error(w, "insufficent Resources", http.StatusBadRequest)
+		return
+	}
+
+	mats, err := database.FindProductsByProductionId(prod.Id)
+
+	//check if the building has the needed resources
+	storage, err := database.GetBuildingStorage(building.Id)
+	if err != nil {
+		http.Error(w, "Insufficent storage", http.StatusBadRequest)
+	}
+
+	//check fpr storage and reduce storage if possible
+	for _, v := range mats {
+		v.Amount *= body.Cycles
+		for _, k := range storage {
+			if k.ProductId == v.Id {
+				if v.Amount <= k.Amount {
+					k.Amount -= v.Amount
+				} else {
+					http.Error(w, "insufficent Storage", http.StatusBadRequest)
+					return
+				}
+			}
+		}
+	}
+	//start production
+	db := database.GetDB()
+
+	duration := prod.BaseDuration * body.Cycles
+	rslt, err := db.Exec(`INSERT into rel_building_def_production(building_id, production_id, time_start, time_end, cycles, is_completed) VALUES(?,?,?,?,?,?)`, building.Id, prod.Id, time.Now().Unix(), time.Now().Unix()+int64(duration), body.Cycles, false)
+	if err != nil {
+		http.Error(w, "could not start production", http.StatusInternalServerError)
+		return
+	}
+
+	resId, err := rslt.LastInsertId()
+	if err != nil {
+		http.Error(w, "something went wrong", http.StatusInternalServerError)
+	}
+	json.NewEncoder(w).Encode(struct {
+		Id int `json:"id"`
+	}{
+		Id: int(resId),
+	})
 }

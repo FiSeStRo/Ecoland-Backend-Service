@@ -1,6 +1,7 @@
 <?php
 
-enum StmtStatus{
+enum StmtStatus
+{
     case Inactive;
     case InPreparation;
     case PreparationComplete;
@@ -10,14 +11,16 @@ enum StmtStatus{
     case ExecutionDisabled; // just mocking data, no real sql executions
 }
 
-enum StmtDataType{
+enum StmtDataType
+{
     case Int;
     case Bool;
     case Float;
     case String;
 }
 
-enum DbTables: string{
+enum DbTables: string
+{
     case Users = "users";
     case UserResources = "user_resources";
     case Buildings = "buildings";
@@ -30,8 +33,10 @@ enum DbTables: string{
     case DefBuildingProduction = "def_rel_building_production";
 }
 
-trait HasDatabaseAccessTrait{
-    public function __construct() {
+trait HasDatabaseAccessTrait
+{
+    public function __construct()
+    {
         $this->m_Db = new DatabaseHandler;
     }
 
@@ -46,15 +51,17 @@ class DatabaseHandler
         $this->initializeDatabase();
     }
 
-    public function createTables(SetupService &$setupService) : bool{
+    public function createTables(SetupService &$setupService): bool
+    {
         $createQueryList = $setupService->getCreateTableQueries();
-        foreach($createQueryList as $sql){
+        foreach ($createQueryList as $sql) {
             $this->executeQuery($sql);
         }
         return true;
     }
 
-    public function deleteTables(SetupService &$setupService) : bool{
+    public function deleteTables(SetupService &$setupService): bool
+    {
         $sql = $setupService->getDeleteTableQuery();
         $this->executeQuery($sql);
         return true;
@@ -94,8 +101,9 @@ class DatabaseHandler
         $this->storeStmtParam(StmtDataType::String, $value);
     }
 
-    public function bindStatementParamTimestamp(int $timestamp){
-        $formattedTimestamp = date ('Y-m-d H:i:s', $timestamp);
+    public function bindStatementParamTimestamp(int $timestamp)
+    {
+        $formattedTimestamp = date('Y-m-d H:i:s', $timestamp);
         $this->storeStmtParam(StmtDataType::String, $formattedTimestamp);
     }
 
@@ -106,7 +114,7 @@ class DatabaseHandler
      * @return InternalStatus OnSuccess with Status ValidDatabaseRequest or ValidCreation, RequestStatus error otherwise.
      */
     public function executeStatement(bool $onSelectNumRowsOnly = false, bool $onSingleResultUseArray = false): InternalStatus
-    {    
+    {
         $status = new InternalStatus(RequestStatus::Undefined);
         if ($this->m_StatementStatus == StmtStatus::InPreparation) {
             // Bind all collected params
@@ -116,10 +124,9 @@ class DatabaseHandler
         // Execute the statement
         if ($this->m_StatementStatus == StmtStatus::PreparationComplete) {
             if (DATABASE_EXECUTE_ENABLED) {
-                try{
+                try {
                     $this->m_StatementStatus = ($this->m_CurrentStatement->execute()) ? StmtStatus::ExecutionSuccess : StmtStatus::ExecutionError;
-                }
-                catch( mysqli_sql_exception $e){
+                } catch (mysqli_sql_exception $e) {
                     $this->m_StatementStatus = StmtStatus::ExecutionError;
                     dev_var_dump($e);
                 }
@@ -130,27 +137,26 @@ class DatabaseHandler
         }
 
         // Analyse results
-        if ($this->m_StatementStatus == StmtStatus::ExecutionSuccess) {   
-            $requestStatus = RequestStatus::ValidDatabaseRequest;         
+        if ($this->m_StatementStatus == StmtStatus::ExecutionSuccess) {
+            $requestStatus = RequestStatus::ValidDatabaseRequest;
             $numAffectedRows = $this->m_CurrentStatement->affected_rows; // rows affected by INSERT, DELETE or UPDATE
             $newEntryId = 0;
             $data = array();
             if ($numAffectedRows > 0) {
                 // for INSERT the newly inserted id is returned
-                if( $this->m_CurrentStatement->insert_id > 0){
+                if ($this->m_CurrentStatement->insert_id > 0) {
                     $newEntryId = $this->m_CurrentStatement->insert_id;
                     $requestStatus = RequestStatus::ValidCreation;
                 }
             } else {
-                $result = $this->m_CurrentStatement->get_result();               
+                $result = $this->m_CurrentStatement->get_result();
                 $numAffectedRows = $result->num_rows;
-                if( !$onSelectNumRowsOnly ){
+                if (!$onSelectNumRowsOnly) {
                     // read data only if requested
-                    if( !$onSingleResultUseArray && $result->num_rows == 1 ){
+                    if (!$onSingleResultUseArray && $result->num_rows == 1) {
                         // single result
                         $data = $result->fetch_assoc();
-                    }
-                    else{
+                    } else {
                         while ($row = $result->fetch_assoc()) {
                             array_push($data, $row);
                         }
@@ -163,7 +169,7 @@ class DatabaseHandler
         }
 
         // Error Handling
-        switch( $this->m_StatementStatus){
+        switch ($this->m_StatementStatus) {
             case StmtStatus::ExecutionDisabled;
                 $status = new InternalStatus(RequestStatus::DatabaseExecutionDisabled);
                 break;
@@ -262,11 +268,10 @@ class DatabaseHandler
                 }
             }
 
-            try{
+            try {
                 $isBindingValid = $this->m_CurrentStatement->bind_param($types, ...$this->m_StatementValues);
                 $this->m_StatementStatus = $isBindingValid ? StmtStatus::PreparationComplete : StmtStatus::InvalidParamBinding;
-            }
-            catch( ArgumentCountError $e){
+            } catch (ArgumentCountError $e) {
                 $this->m_StatementStatus = StmtStatus::InvalidParamBinding;
             }
         } else {
@@ -276,7 +281,8 @@ class DatabaseHandler
         }
     }
 
-    private function resetCurrentStatement(){
+    private function resetCurrentStatement()
+    {
         unset($this->m_CurrentStatement);
         $this->m_StatementStatus = StmtStatus::Inactive;
         $this->m_StatementDataTypes = array();
