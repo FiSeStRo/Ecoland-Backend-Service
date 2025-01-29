@@ -91,16 +91,16 @@ func initialiseUserTable() {
 }
 
 func initaliseProductTables() {
-	createDefProducts := `CREATE TABLE IF NOT EXISTS def_products(
+	createDefProducts := `CREATE TABLE IF NOT EXISTS def_product(
 	id INT PRIMARY KEY,
 	base_value INT NOT NULL,
 	token_name VARCHAR(255))`
 
 	_, err := db.Exec(createDefProducts)
 	if err != nil {
-		log.Panic("error creating def_products table", err)
+		log.Panic("error creating def_product table", err)
 	} else {
-		log.Println("def_products Table created or already in place")
+		log.Println("def_product Table created or already in place")
 	}
 
 }
@@ -133,9 +133,9 @@ func initaliseRelationTables() {
 
 	_, err := db.Exec(createRelBuildingProduct)
 	if err != nil {
-		log.Panic("error creating def_products table", err)
+		log.Panic("error creating def_product table", err)
 	} else {
-		log.Println("def_products Table created or already in place")
+		log.Println("def_product Table created or already in place")
 	}
 
 	createDefRelBuildingProduction := `CREATE TABLE IF NOT EXISTS def_rel_building_production(

@@ -35,14 +35,14 @@ func main() {
 	if *defSetup {
 		log.Println("Setting up def tables")
 		//setup defTable from config
-		var defBuilding []database.DefBuildingTable
-		var defProducts []database.DefProductTable
-		var defProduction []database.DefProductionTable
+		var defBuilding []database.DefBuilding
+		var defProducts []database.DefProduct
+		var defProduction []database.DefProduction
 		err = utils.SetupDefTable("../config/def_buildings.json", defBuilding, "def_buildings", "(id, token_name, base_construction_cost, base_construction_time)")
 		if err != nil {
 			log.Fatalln(err)
 		}
-		err = utils.SetupDefTable("./config/def_products.json", defProducts, "def_products", "(id, base_value, token_name)")
+		err = utils.SetupDefTable("./config/def_products.json", defProducts, "def_product", "(id, base_value, token_name)")
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -66,6 +66,7 @@ func main() {
 
 	//production
 	http.HandleFunc("/production/list", service.ListOfProductions)
+	http.HandleFunc("/production/start", service.StartProduction)
 
 	// user
 	http.HandleFunc("/user/resources", service.GetUserResources)

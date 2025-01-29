@@ -22,7 +22,7 @@ CREATE TABLE `buildings` (
   `time_build` timestamp NOT NULL
 );
 
-CREATE TABLE `def_products` (
+CREATE TABLE `def_product` (
   `id` int PRIMARY KEY,
   `base_value` int NOT NULL,
   `token_name` sting
@@ -79,7 +79,7 @@ ALTER TABLE `buildings` ADD FOREIGN KEY (`def_id`) REFERENCES `def_buildings` (`
 
 ALTER TABLE `def_rel_production_product` ADD FOREIGN KEY (`production_id`) REFERENCES `def_production` (`id`);
 
-ALTER TABLE `def_rel_production_product` ADD FOREIGN KEY (`product_id`) REFERENCES `def_products` (`id`);
+ALTER TABLE `def_rel_production_product` ADD FOREIGN KEY (`product_id`) REFERENCES `def_product` (`id`);
 
 ALTER TABLE `def_rel_building_production` ADD FOREIGN KEY (`building_id`) REFERENCES `def_buildings` (`id`);
 
@@ -87,7 +87,7 @@ ALTER TABLE `def_production` ADD FOREIGN KEY (`id`) REFERENCES `def_rel_building
 
 ALTER TABLE `rel_building_product` ADD FOREIGN KEY (`building_id`) REFERENCES `buildings` (`id`);
 
-ALTER TABLE `rel_building_product` ADD FOREIGN KEY (`product_id`) REFERENCES `def_products` (`id`);
+ALTER TABLE `rel_building_product` ADD FOREIGN KEY (`product_id`) REFERENCES `def_product` (`id`);
 
 ALTER TABLE `rel_buildng_def_production` ADD FOREIGN KEY (`building_id`) REFERENCES `buildings` (`id`);
 
