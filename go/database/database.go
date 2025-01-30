@@ -70,7 +70,7 @@ func initialiseUserTable() {
 		time_last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)`
 
-	createUserResourcesTable := `CREATE TABLE IF NOT EXISTS user_resources (
+	createUserResourcesTable := `CREATE TABLE IF NOT EXISTS user_resources(
   		user_id int PRIMARY KEY,
   		money decimal NOT NULL DEFAULT 100000,
   		prestige int

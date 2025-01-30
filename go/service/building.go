@@ -112,7 +112,17 @@ func ConstructBuilding(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	//TODO: calculate if user can afford building if not return error otherwise deduct money from user
+	if money < cost {
+		http.Error(w, "insuuficent resources", http.StatusBadRequest)
+		return
+	}
+	money -= cost
+
+	err = database.UpdateUserResources(database.PUserResource{UserId: claims.UserId, Money: &money})
+	if err != nil {
+		http.Error(w, "could not update money", http.StatusInternalServerError)
+		return
+	}
 
 	stmt, err := db.Prepare(`INSERT INTO buildings (user_id, def_id, name, time_build)
 	VALUES (?, ?, ?, CURRENT_TIMESTAMP)`)

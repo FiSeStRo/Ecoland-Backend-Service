@@ -188,7 +188,7 @@ func StartProduction(w http.ResponseWriter, req *http.Request) {
 	db := database.GetDB()
 
 	duration := prod.BaseDuration * body.Cycles
-	rslt, err := db.Exec(`INSERT into rel_building_def_production(building_id, production_id, time_start, time_end, cycles, is_completed) VALUES(?,?,?,?,?,?)`, building.Id, prod.Id, time.Now().Unix(), time.Now().Unix()+int64(duration), body.Cycles, false)
+	rslt, err := db.Exec(`INSERT INTO rel_building_def_production(building_id, production_id, time_start, time_end, cycles, is_completed) VALUES(?,?,?,?,?,?)`, building.Id, prod.Id, time.Now().Unix(), time.Now().Unix()+int64(duration), body.Cycles, false)
 	if err != nil {
 		http.Error(w, "could not start production", http.StatusInternalServerError)
 		return
