@@ -23,3 +23,12 @@ func IsMethodGET(w http.ResponseWriter, req *http.Request) bool {
 
 	return true
 }
+
+func IsMethodDELET(w http.ResponseWriter, req *http.Request) bool {
+	if req.Method != http.MethodDelete {
+		w.Header().Set("Allow", "DELETE")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return false
+	}
+	return true
+}

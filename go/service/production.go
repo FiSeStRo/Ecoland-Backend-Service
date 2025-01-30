@@ -204,3 +204,65 @@ func StartProduction(w http.ResponseWriter, req *http.Request) {
 		Id: int(resId),
 	})
 }
+
+func CancelProduction(w http.ResponseWriter, req *http.Request) {
+	if !utils.IsMethodDELET(w, req) {
+		return
+	}
+	claims, err := authentication.ValidateAuthentication(req)
+	if err != nil {
+		http.Error(w, "invalid token", http.StatusUnauthorized)
+		return
+	}
+	type ReqBody struct {
+		BuildingId int `json:"id"`
+	}
+	//getUrlParam
+	id, err := utils.GetUrlParamId(
+		utils.UrlParam{Url: req.URL.Path, Position: 3},
+	)
+	if err != nil {
+		if err.Error() == "wrong path" {
+			http.Error(w, "wrong path", http.StatusNotFound)
+		} else {
+			http.Error(w, "invalid id", http.StatusBadRequest)
+		}
+		return
+	}
+
+	prod, err := database.FindProductionById(id)
+	if err != nil {
+		http.Error(w, "error finding production", http.StatusBadRequest)
+		return
+	}
+
+	//Production belongs to user
+	building, err := database.FindBuilding(prod.BuildingId)
+	if err != nil {
+		http.Error(w, "no building for producitonId", http.StatusBadRequest)
+		return
+	}
+	if building.UserId != claims.UserId {
+		http.Error(w, "invalid Request", http.StatusBadRequest)
+		return
+	}
+
+	if prod.IsCompleted == true {
+		http.Error(w, "can not cancel finished production", http.StatusBadRequest)
+		return
+	}
+
+	db := database.GetDB()
+	rslt, err := db.Exec(`DELETE FROM ? WHERE id=?`, database.RelBuildingDefProductionTable, id)
+	if err != nil {
+		http.Error(w, "Could not cancel Production", http.StatusInternalServerError)
+		return
+	}
+	rows, err := rslt.RowsAffected()
+	if err != nil || rows == 0 {
+		http.Error(w, "production not found", http.StatusNotFound)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+
+}
