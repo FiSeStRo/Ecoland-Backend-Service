@@ -61,3 +61,4 @@ type Production struct {
 }
 
 const RelBuildingDefProductionTable = "rel_building_def_production"
+const UserResourceTable = "user_resources"

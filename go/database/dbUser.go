@@ -27,3 +27,24 @@ func GetUserResources(userId int) (UserResource, error) {
 	}
 	return userResource, nil
 }
+
+type PUserResource struct {
+	UserId   int
+	Money    *float64
+	Prestige *int
+}
+
+func UpdateUserResources(res PUserResource) error {
+	if res.Money != nil {
+		_, err := db.Exec(`INSERT INTO ?(money) VALUES(?)`, UserResourceTable, *res.Money)
+		if err != nil {
+			return err
+		}
+	} else if res.Prestige != nil {
+		_, err := db.Exec(`INSERT INTO ?(prestige) VALUES(?)`, UserResourceTable, *res.Prestige)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
