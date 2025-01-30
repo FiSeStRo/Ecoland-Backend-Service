@@ -49,3 +49,15 @@ type UserResource struct {
 	Money    float64 `json:"money"`
 	Prestige int     `json:"prestige"`
 }
+
+type Production struct {
+	Id           int
+	BuildingId   int
+	ProductionId int
+	TimeStart    int
+	TimeEnd      int
+	Cycles       int
+	IsCompleted  bool
+}
+
+const RelBuildingDefProductionTable = "rel_building_def_production"
