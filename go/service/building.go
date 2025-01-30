@@ -170,6 +170,7 @@ type BuildingListRes struct {
 	Production Production
 }
 
+// ListOfBuidlings returns a list of possible buildings that the user can construct
 func ListOfBuildings(w http.ResponseWriter, req *http.Request) {
 	if !utils.IsMethodGET(w, req) {
 		return
@@ -207,27 +208,6 @@ func ListOfBuildings(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, http.StatusText(500), 500)
 			return
 		}
-		//TODO: collect the rest of the data from the other tables and return the complete struct if success
-
-		//get the list of possible productions
-		// stmtps, err := db.Query(`
-		// SELECT p.production_id, dp.token_name, dp.cost, dp.base_duration
-		// FROM def_rel_building_production p
-		// JOIN def_production dp ON p.production_id = dp.id
-		// WHERE p.building_id=?`, b.id)
-		// if err != nil {
-		// 	http.Error(w, "error searching for productions", http.StatusInternalServerError)
-		// 	return
-		// }
-		// for stmtps.Next() {
-		// 	p := production{}
-		// 	err = stmtps.Scan(&p.id, &p.token_name, &p.cost, &p.base_duration)
-		// 	if err != nil {
-		// 		http.Error(w, "error scan for productions", http.StatusInternalServerError)
-		// 		return
-		// 	}
-		// 	b.productions = append(b.productions, p)
-		// }
 		//get current Production of the building
 		var p struct {
 			id          int
