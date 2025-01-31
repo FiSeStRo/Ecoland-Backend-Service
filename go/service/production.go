@@ -198,6 +198,7 @@ func StartProduction(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		http.Error(w, "something went wrong", http.StatusInternalServerError)
 	}
+	utils.SetHeaderJson(w)
 	json.NewEncoder(w).Encode(struct {
 		Id int `json:"id"`
 	}{

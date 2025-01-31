@@ -60,5 +60,14 @@ type Production struct {
 	IsCompleted  bool
 }
 
+type BStorage struct {
+	BuildingId int `json:"building_id"`
+	ProductId  int `json:"product_id"`
+	Amount     int `json:"amount"`
+	Capacity   int `json:"capacity"`
+}
+
 const RelBuildingDefProductionTable = "rel_building_def_production"
 const UserResourceTable = "user_resources"
+const StorageBuildingTable = "rel_building_product"
+const BuildingsTable = "buildings"

@@ -69,6 +69,8 @@ func main() {
 	http.HandleFunc("/production/start", service.StartProduction)
 	http.HandleFunc("/production/cancel", service.CancelProduction)
 
+	//transportation
+	http.HandleFunc("/transportation/shipment", service.ShipItems)
 	// user
 	http.HandleFunc("/user/resources", service.GetUserResources)
 
