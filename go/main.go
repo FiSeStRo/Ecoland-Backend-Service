@@ -63,6 +63,7 @@ func main() {
 	http.HandleFunc("/buildings/constructionlist", service.ConstructionList)
 	http.HandleFunc("/buildings/construct", service.ConstructBuilding)
 	http.HandleFunc("/buildings/list", service.ListOfBuildings)
+	http.HandleFunc("/buildings/details", service.BuildingDetails)
 
 	//production
 	http.HandleFunc("/production/list", service.ListOfProductions)

@@ -67,7 +67,9 @@ type BStorage struct {
 	Capacity   int `json:"capacity"`
 }
 
-const RelBuildingDefProductionTable = "rel_building_def_production"
-const UserResourceTable = "user_resources"
-const StorageBuildingTable = "rel_building_product"
-const BuildingsTable = "buildings"
+const (
+	BuildingProductionTable = "rel_building_def_production"
+	UserResourceTable       = "user_resources"
+	StorageBuildingTable    = "rel_building_product"
+	BuildingsTable          = "buildings"
+)
