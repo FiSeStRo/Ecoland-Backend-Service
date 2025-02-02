@@ -3,8 +3,8 @@ services:
     build: .
     ports:
       - "8080:80"
-    # volumes:
-    #   - .:/var/www/html
+    volumes:
+      - .:/var/www/html
   mariadb_php:
     image: mariadb:latest
     container_name: mariadb_php
