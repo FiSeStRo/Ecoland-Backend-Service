@@ -255,3 +255,48 @@ func ListOfBuildings(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(buildingList)
 
 }
+
+func BuildingDetails(w http.ResponseWriter, req *http.Request) {
+	utils.SetHeaderJson(w)
+	id, err := utils.GetUrlParamId(utils.UrlParam{Url: req.URL.Path, Position: 3})
+	if err != nil {
+		http.Error(w, "could not find building id", http.StatusNotFound)
+		return
+	}
+	claims, err := authentication.ValidateAuthentication(req)
+	if err != nil {
+		http.Error(w, "invalid token", http.StatusUnauthorized)
+		return
+	}
+	if !database.IsUserBuildingOwner(claims.UserId, id) {
+		http.Error(w, "user is not building owner", http.StatusUnauthorized)
+		return
+	}
+	//Get the building from the buildings Table
+	building, err := database.FindBuilding(id)
+	if err != nil {
+		http.Error(w, "could not find building", http.StatusBadRequest)
+		return
+	}
+	//Get the current Production of the Building
+	production, err := database.FindProductionByBuilding(id)
+	if err != nil {
+		http.Error(w, "could not find productions", id)
+	}
+
+	storage, err := database.GetBStorage(id)
+
+	type ResBody struct {
+		database.Building
+		Storage    []database.BStorage   `json:"storage"`
+		Production []database.Production `json:"production"`
+	}
+
+	resBody := ResBody{
+		Building:   building,
+		Storage:    storage,
+		Production: production,
+	}
+	json.NewEncoder(w).Encode(resBody)
+
+}

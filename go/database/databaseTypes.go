@@ -60,5 +60,16 @@ type Production struct {
 	IsCompleted  bool
 }
 
-const RelBuildingDefProductionTable = "rel_building_def_production"
-const UserResourceTable = "user_resources"
+type BStorage struct {
+	BuildingId int `json:"building_id"`
+	ProductId  int `json:"product_id"`
+	Amount     int `json:"amount"`
+	Capacity   int `json:"capacity"`
+}
+
+const (
+	BuildingProductionTable = "rel_building_def_production"
+	UserResourceTable       = "user_resources"
+	StorageBuildingTable    = "rel_building_product"
+	BuildingsTable          = "buildings"
+)

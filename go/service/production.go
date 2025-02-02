@@ -198,6 +198,7 @@ func StartProduction(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		http.Error(w, "something went wrong", http.StatusInternalServerError)
 	}
+	utils.SetHeaderJson(w)
 	json.NewEncoder(w).Encode(struct {
 		Id int `json:"id"`
 	}{
@@ -253,7 +254,7 @@ func CancelProduction(w http.ResponseWriter, req *http.Request) {
 	}
 
 	db := database.GetDB()
-	rslt, err := db.Exec(`DELETE FROM ? WHERE id=?`, database.RelBuildingDefProductionTable, id)
+	rslt, err := db.Exec(`DELETE FROM ? WHERE id=?`, database.BuildingProductionTable, id)
 	if err != nil {
 		http.Error(w, "Could not cancel Production", http.StatusInternalServerError)
 		return
