@@ -56,6 +56,25 @@ class UserService{
         return $status->getNumAffectedRows() > 0;
     }
 
+    
+    private function doesUserWithEmailExist(string $email) : InternalStatus{
+        if( !$this->isValidEmail($email)){
+            return new InternalStatus(RequestStatus::InvalidInputEmail);
+        }
+
+        $sql = "SELECT id FROM " . DbTables::Users->value ." WHERE email=?";
+        $status = new InternalStatus(RequestStatus::Undefined);
+        if( $this->m_Db->createStatement($sql)){
+            $this->m_Db->bindStatementParamString($email);
+            $status = $this->m_Db->executeStatement(true);
+        }
+
+        return new InternalStatus(($status->getNumAffectedRows() > 0) 
+            ? RequestStatus::UserEmailDoesAlreadyExist
+            : RequestStatus::Valid
+        );
+    }
+
     public function getUserList() : InternalStatus{
         $sql = "SELECT * FROM ". DbTables::Users->value ."";       
         if( $this->m_Db->createStatement($sql)){
@@ -75,15 +94,25 @@ class UserService{
         return new InternalStatus(RequestStatus::DatabaseStmtCreationError);
     }
 
-    public function createNewUser(string $username, string $password) : InternalStatus{
+    public function createNewUser(string $username, string $email, string $password) : InternalStatus{
         if( $this->doesUserWithUsernameExist($username) ){
             return new InternalStatus(RequestStatus::UserDoesAlreadyExist);
+        }       
+
+        if( !$this->isValidEmail($email)){
+            return new InternalStatus(RequestStatus::InvalidInputEmail);
         }
 
-        $sql = "INSERT INTO ". DbTables::Users->value ." (username, password, role) VALUES (?, ?, ?)";
+        $emailStatus = $this->doesUserWithEmailExist($email);
+        if( !$emailStatus->isValidStatus() ){
+            return $emailStatus;
+        }
+
+        $sql = "INSERT INTO ". DbTables::Users->value ." (username, email, password, role) VALUES (?, ?, ?, ?)";
         $status = new InternalStatus(RequestStatus::Undefined);
         if( $this->m_Db->createStatement($sql)){
             $this->m_Db->bindStatementParamString($username);
+            $this->m_Db->bindStatementParamString($email);
             $this->m_Db->bindStatementParamString($password);
             $this->m_Db->bindStatementParamInt(self::NEW_USER_DEFAULT_ROLE);
             $status = $this->m_Db->executeStatement();        
@@ -125,6 +154,10 @@ class UserService{
             $this->m_Db->bindStatementParamInt($userId);
             $this->m_Db->executeStatement();
         }
+    }
+
+    private function isValidEmail(string $email) : bool{       
+        return ( filter_var($email, FILTER_VALIDATE_EMAIL) !== false);
     }
 
     private const NEW_USER_DEFAULT_ROLE = 0;

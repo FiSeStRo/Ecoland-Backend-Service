@@ -81,11 +81,11 @@ class RequestHandler{
 
         // Sanitize remaining parameters
         foreach( $getParams as &$param ){
-            $param = preg_replace('/[^-a-zA-Z0-9_]/', '', $param);
+            $param = preg_replace('/[^-a-zA-Z0-9_.@]/', '', $param);
         }
         foreach( $postParams as $key => &$param){           
             if( $key != 'display_name'){
-                $param = preg_replace('/[^-a-zA-Z0-9_]/', '', $param);
+                $param = preg_replace('/[^-a-zA-Z0-9_.@]/', '', $param);
             }
         }
 

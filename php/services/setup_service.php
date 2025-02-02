@@ -230,6 +230,7 @@ class SetupService
             self::SQL_DEFINITION_COLUMNS => [
                 'id INT NOT NULL AUTO_INCREMENT',
                 'username VARCHAR(255)',
+                'email VARCHAR(255)',
                 'password VARCHAR(255)',
                 'role INT',
                 'time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP()',
