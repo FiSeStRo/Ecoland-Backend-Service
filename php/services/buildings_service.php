@@ -36,6 +36,10 @@ class BuildingDefinition
 
     private function initProductionList(DatabaseHandler &$db)
     {
+        if( !$this->isValid ){
+            return;
+        }
+
         $sql = "SELECT production_id FROM " . DbTables::DefBuildingProduction->value . " WHERE building_id = ?";
         if ($db->createStatement($sql)) {
             $db->bindStatementParamInt($this->id);

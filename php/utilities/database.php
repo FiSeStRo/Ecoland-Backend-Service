@@ -72,10 +72,13 @@ class DatabaseHandler
         $this->resetCurrentStatement();
 
         if (!empty($sql)) {
-            $this->m_CurrentStatement = $this->m_DbHandle->prepare($sql);
-            if ($this->m_CurrentStatement !== false) {
-                $this->m_StatementStatus = StmtStatus::InPreparation;
+            try{
+                $this->m_CurrentStatement = $this->m_DbHandle->prepare($sql);
+                if ($this->m_CurrentStatement !== false) {
+                    $this->m_StatementStatus = StmtStatus::InPreparation;
+                }
             }
+            catch(mysqli_sql_exception $e){}
         }
 
         return ($this->m_StatementStatus == StmtStatus::InPreparation);
@@ -308,7 +311,7 @@ class DatabaseHandler
         return false;
     }
 
-    private const DB_HOST = 'mariadb_root';
+    private const DB_HOST = 'mariadb_php';
     private const DB_USER = 'maria';
     private const DB_PASSWORD = 'maria123';
     private const DB_DEFAULT_DATABASE = 'mariadb';

@@ -3,9 +3,11 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/FiSeStRo/Ecoland-Backend-Service/database"
 	"github.com/FiSeStRo/Ecoland-Backend-Service/service"
@@ -17,9 +19,14 @@ var defSetup = flag.Bool("ds", false, "run setup")
 
 func main() {
 	flag.Parse()
-
 	//Start Database
-	dsn := "maria:maria123@tcp(localhost:3306)/ecoland"
+	//for localhost "maria:maria123@tcp(localhost:3306)/ecoland"
+	//Load Env
+	err := utils.LoadEnv(".env")
+	if err != nil {
+		log.Panicln("error with env", err)
+	}
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", os.Getenv("DB_USER"), os.Getenv("DB_PW"), os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_NAME"))
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Panicln("panic can't open db", err)

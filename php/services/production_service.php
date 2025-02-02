@@ -32,6 +32,10 @@ class ProductionDefinition{
     }
 
     private function initializeProductionRecipe(DatabaseHandler &$db){
+        if( !$this->isValid ){
+            return;
+        }
+
         $sql = "SELECT ". DbTables::DefProductionRecipe->value .".*, " . DbTables::DefProducts->value. ".token_name 
                 FROM " . DbTables::DefProductionRecipe->value . " 
                 LEFT JOIN " . DbTables::DefProducts->value . " ON " . DbTables::DefProductionRecipe->value . ".product_id="
