@@ -308,7 +308,7 @@ class DatabaseHandler
         return false;
     }
 
-    private const DB_HOST = 'mariadb_root';
+    private const DB_HOST = 'mariadb_php';
     private const DB_USER = 'maria';
     private const DB_PASSWORD = 'maria123';
     private const DB_DEFAULT_DATABASE = 'mariadb';
