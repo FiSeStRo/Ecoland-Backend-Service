@@ -16,17 +16,18 @@ class AuthenticationEndpoint extends Endpoint{
     public function signUp() : InternalStatus{
         $signUpParams = $this->getParams();
 
-        if( !isset($signUpParams['username']) || !isset($signUpParams['password'])
-        || empty($signUpParams['username']) || empty($signUpParams['password']) ){
+        if( !isset($signUpParams['username']) || !isset($signUpParams['email']) || !isset($signUpParams['password'])
+        || empty($signUpParams['username']) || empty($signUpParams['email']) || empty($signUpParams['password']) ){
             $status = new InternalStatus(RequestStatus::InvalidInput);           
             return $status;
         }
 
         $username = $signUpParams['username'];
+        $email = $signUpParams['email'];
         $passwordRaw = $signUpParams['password'];
 
         // Params seem to be valid -> try to create a new account.
-        $statusNewUser = $this->m_UserService->createNewUser($username, $passwordRaw);
+        $statusNewUser = $this->m_UserService->createNewUser($username, $email, $passwordRaw);
 
         return $statusNewUser;
     }

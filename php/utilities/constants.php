@@ -20,6 +20,7 @@ enum RequestStatus : string{
     case GeneralError = 'GeneralError';
     case Uninitialized = 'Unitialized';
     case InvalidInput = 'InvalidInput';
+    case InvalidInputEmail = 'InvalidInputEmail'; // Email address input is not of form email
     case AuthenticationInvalid = 'AuthenticationInvalid';
     case UnknownEndpoint = 'UnknownEndpoint';
     case MissingCommand = 'MissingCommand';
@@ -49,6 +50,7 @@ enum RequestStatus : string{
     case StorageInvalidAmount = 'StorageInvalidAmount';
     // User (Resources) Errors
     case UserDoesAlreadyExist = 'UserDoesAlreadyExist';
+    case UserEmailDoesAlreadyExist = 'UserEmailDoesAlreadyExist';
     case UserDoesNotExist = 'UserDoesNotExist';
     case UserInsufficientFunds = 'UserInsufficientFunds';
     // Financial Errors
