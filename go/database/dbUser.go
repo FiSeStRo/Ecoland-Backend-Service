@@ -48,3 +48,13 @@ func UpdateUserResources(res PUserResource) error {
 	}
 	return nil
 }
+
+func EmailExists(email string) (bool, error) {
+	rslt := db.QueryRow(`SELECT COUNT(*) FROM users WHERE email=?`, email)
+	var count int
+	err := rslt.Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}

@@ -97,7 +97,6 @@ func SignUp(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "unalbe to read the body", 400)
 		return
 	}
-
 	err = json.Unmarshal(body, &signUpUser)
 	if err != nil {
 		http.Error(w, "could not decode JSON", 400)
@@ -117,6 +116,15 @@ func SignUp(w http.ResponseWriter, req *http.Request) {
 
 	if !utils.IsEmail(signUpUser.Email) {
 		http.Error(w, "In valid email", http.StatusBadRequest)
+		return
+	}
+	hasEmail, err := database.EmailExists(signUpUser.Email)
+	if err != nil {
+		http.Error(w, "db error", http.StatusInternalServerError)
+	}
+	if hasEmail {
+		http.Error(w, "email already exists", http.StatusBadRequest)
+		return
 	}
 
 	bp, err := bcrypt.GenerateFromPassword([]byte(signUpUser.Password), bcrypt.MinCost)
@@ -185,13 +193,13 @@ func GetUserResources(w http.ResponseWriter, req *http.Request) {
 }
 func AddUser(user User) (int, error) {
 	db := database.GetDB()
-	stmt, err := db.Prepare(`INSERT into users(username, password) VALUES (?,?)`)
+	stmt, err := db.Prepare(`INSERT into users(username, password, email) VALUES (?,?,?)`)
 	if err != nil {
 		return 0, err
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(user.Username, user.Password)
+	result, err := stmt.Exec(user.Username, user.Password, user.Email)
 	if err != nil {
 		return 0, err
 	}
