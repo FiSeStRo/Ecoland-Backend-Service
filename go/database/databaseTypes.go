@@ -72,4 +72,5 @@ const (
 	UserResourceTable       = "user_resources"
 	StorageBuildingTable    = "rel_building_product"
 	BuildingsTable          = "buildings"
+	UserTable               = "users"
 )

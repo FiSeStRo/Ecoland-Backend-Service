@@ -39,6 +39,7 @@ func main() {
 		log.Println("Succesfully connected to db")
 	}
 	database.SetDB(db)
+	database.InitDatabaseTables()
 	if *defSetup {
 		log.Println("Setting up def tables")
 		//setup defTable from config
