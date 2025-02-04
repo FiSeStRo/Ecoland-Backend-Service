@@ -1,19 +1,21 @@
 services:
   web:
     build: .
+    env_file:
+      - ".env"
     ports:
       - "8080:80"
     volumes:
       - .:/var/www/html
-  mariadb_php:
+  mariadb-service:
     image: mariadb:latest
     container_name: mariadb_php
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: maria123
-      MYSQL_DATABASE: mariadb
-      MYSQL_USER: maria
-      MYSQL_PASSWORD: maria123
+      MYSQL_ROOT_PASSWORD: ${DB_PW}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_NAME}
     ports:
       - "3306:3306"
     volumes:

@@ -1,12 +1,15 @@
 services:
-  go-service:
-    build: .
+  php-be-service:
+    build: ./php
+    ports:
+    - "8080:80"
+  go-be-service:
+    build: ./go
     ports:
       - "8081:8081"
-    restart: always
   mariadb-service:
     image: mariadb:latest
-    container_name: mariadb_go
+    container_name: mariadb
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PW}
@@ -15,9 +18,8 @@ services:
       MYSQL_PASSWORD: ${DB_PW}
     ports:
       - "3306:3306"
-    volumes:
-      - mariadb_data:/var/lib/mysql # Persist database data
-
-volumes:
-  mariadb_data:
-    driver: local
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: always
