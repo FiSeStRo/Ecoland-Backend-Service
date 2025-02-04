@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/FiSeStRo/Ecoland-Backend-Service/database"
 	"github.com/FiSeStRo/Ecoland-Backend-Service/service"
@@ -62,32 +63,52 @@ func main() {
 
 	//Handle Routing
 
+	mux := http.NewServeMux()
 	//authentication
-	http.HandleFunc("/authentication/refresh-token", service.NewRefreshToken)
-	http.HandleFunc("/authentication/sign-in", service.SignIn)
-	http.HandleFunc("/authentication/sign-up", service.SignUp)
+	mux.HandleFunc("/authentication/refresh-token", service.NewRefreshToken)
+	mux.HandleFunc("/authentication/sign-in", service.SignIn)
+	mux.HandleFunc("/authentication/sign-up", service.SignUp)
 
 	//buildings
-	http.HandleFunc("/buildings/constructionlist", service.ConstructionList)
-	http.HandleFunc("/buildings/construct", service.ConstructBuilding)
-	http.HandleFunc("/buildings/list", service.ListOfBuildings)
-	http.HandleFunc("/buildings/details", service.BuildingDetails)
+	mux.HandleFunc("/buildings/constructionlist", service.ConstructionList)
+	mux.HandleFunc("/buildings/construct", service.ConstructBuilding)
+	mux.HandleFunc("/buildings/list", service.ListOfBuildings)
+	mux.HandleFunc("/buildings/details", service.BuildingDetails)
 
 	//production
-	http.HandleFunc("/production/list", service.ListOfProductions)
-	http.HandleFunc("/production/start", service.StartProduction)
-	http.HandleFunc("/production/cancel", service.CancelProduction)
+	mux.HandleFunc("/production/list", service.ListOfProductions)
+	mux.HandleFunc("/production/start", service.StartProduction)
+	mux.HandleFunc("/production/cancel", service.CancelProduction)
 
 	//transportation
-	http.HandleFunc("/transportation/shipment", service.ShipItems)
+	mux.HandleFunc("/transportation/shipment", service.ShipItems)
 	// user
-	http.HandleFunc("/user/resources", service.GetUserResources)
+	mux.HandleFunc("/user/resources", service.GetUserResources)
 
-	http.HandleFunc("/", root)
-	http.ListenAndServe(":8081", nil)
+	mux.HandleFunc("/", root)
+	log.Fatal(http.ListenAndServe(":8081", enableCors(mux)))
 }
 
 // Root handles the functionality of the root rout
 func root(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, "Hey ho Let's Go")
+}
+
+func enableCors(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Allow any localhost origin
+		origin := r.Header.Get("Origin")
+		if strings.HasPrefix(origin, "http://localhost:") {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+		}
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		handler.ServeHTTP(w, r)
+	})
 }
