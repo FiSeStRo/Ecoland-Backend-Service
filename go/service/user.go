@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/FiSeStRo/Ecoland-Backend-Service/authentication"
 	"github.com/FiSeStRo/Ecoland-Backend-Service/database"
@@ -259,6 +260,7 @@ func CreateUser(user User) error {
 	return nil
 }
 
+// CreatNewUserResources sets inital user resources
 func CreateNewUserResources(userId int) error {
 
 	db := database.GetDB()
@@ -275,4 +277,37 @@ func CreateNewUserResources(userId int) error {
 		return err
 	}
 	return nil
+}
+
+type UserInfoResp struct {
+	Id       int    `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}
+
+func GetUserInfo(w http.ResponseWriter, req *http.Request) {
+	utils.SetHeaderJson(w)
+	var userInfo UserInfoResp
+	claims, err := authentication.ValidateAuthentication(req)
+	if err != nil {
+		http.Error(w, "invalid token", http.StatusUnauthorized)
+		return
+	}
+	idParam, _ := strconv.Atoi(req.URL.Query().Get("id"))
+
+	// ? when roles are added some roles will be able to change data of user info of some roles
+	if idParam != claims.UserId {
+		http.Error(w, "you are not allowed to do this operation", http.StatusUnauthorized)
+		return
+	}
+
+	user, err := database.FindUserById(idParam)
+	userInfo.Email = user.Email
+	userInfo.Username = user.Username
+	userInfo.Id = user.Id
+	if err != nil {
+		http.Error(w, "couldn't find user info", http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(userInfo)
 }

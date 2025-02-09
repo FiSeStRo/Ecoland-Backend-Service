@@ -84,7 +84,7 @@ func main() {
 	mux.HandleFunc("/transportation/shipment", service.ShipItems)
 	// user
 	mux.HandleFunc("/user/resources", service.GetUserResources)
-
+	mux.HandleFunc("GET /user/info", service.GetUserInfo)
 	mux.HandleFunc("/", root)
 	log.Fatal(http.ListenAndServe(":8081", enableCors(mux)))
 }
