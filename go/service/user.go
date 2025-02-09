@@ -64,6 +64,7 @@ func SignIn(w http.ResponseWriter, req *http.Request) {
 	err = bcrypt.CompareHashAndPassword(user.Password, []byte(signInUser.Password))
 	if err != nil {
 		http.Error(w, "Wrong username or password", 400)
+		return
 	}
 
 	accessToken, err := authentication.CreateNewJWT(user.Id, false)
@@ -310,4 +311,40 @@ func GetUserInfo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(userInfo)
+}
+
+type UserUpdateReq struct {
+	Id          int    `json:"id"`
+	Username    string `json:"username"`
+	Email       string `json:"email"`
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
+}
+
+func UpdateUserInfo(w http.ResponseWriter, req *http.Request) {
+	utils.SetHeaderJson(w)
+
+	claims, err := authentication.ValidateAuthentication(req)
+	if err != nil {
+		http.Error(w, "invalid token", http.StatusUnauthorized)
+		return
+	}
+
+	var newUserInfo UserUpdateReq
+
+	json.NewDecoder(req.Body).Decode(&newUserInfo)
+	// ? when roles are added some roles will be able to change data of user info of some roles
+	if newUserInfo.Id != claims.UserId {
+		http.Error(w, "you are not allowed to do this operation", http.StatusUnauthorized)
+		return
+	}
+	user, err := database.FindUserById(newUserInfo.Id)
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(newUserInfo.OldPassword))
+	if err != nil {
+		http.Error(w, "you are not allowed to do this operation", http.StatusUnauthorized)
+		return
+	}
+
+	//ToDO: update userInfo
+
 }
