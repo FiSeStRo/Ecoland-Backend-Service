@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/FiSeStRo/Ecoland-Backend-Service/authentication"
 	"github.com/FiSeStRo/Ecoland-Backend-Service/database"
@@ -64,6 +65,7 @@ func SignIn(w http.ResponseWriter, req *http.Request) {
 	err = bcrypt.CompareHashAndPassword(user.Password, []byte(signInUser.Password))
 	if err != nil {
 		http.Error(w, "Wrong username or password", 400)
+		return
 	}
 
 	accessToken, err := authentication.CreateNewJWT(user.Id, false)
@@ -285,6 +287,7 @@ type UserInfoResp struct {
 	Email    string `json:"email"`
 }
 
+// GetUserInfo get's the info of the provided user by userId
 func GetUserInfo(w http.ResponseWriter, req *http.Request) {
 	utils.SetHeaderJson(w)
 	var userInfo UserInfoResp
@@ -310,4 +313,61 @@ func GetUserInfo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(userInfo)
+}
+
+type UserUpdateReq struct {
+	Id          int    `json:"id"`
+	Username    string `json:"username"`
+	Email       string `json:"email"`
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
+}
+
+// UpdateUserInfo updates the userInfo by userId
+func UpdateUserInfo(w http.ResponseWriter, req *http.Request) {
+	utils.SetHeaderJson(w)
+
+	claims, err := authentication.ValidateAuthentication(req)
+	if err != nil {
+		http.Error(w, "invalid token", http.StatusUnauthorized)
+		return
+	}
+
+	var newUserInfo UserUpdateReq
+
+	json.NewDecoder(req.Body).Decode(&newUserInfo)
+	// ? when roles are added some roles will be able to change data of user info of some roles
+	if newUserInfo.Id != claims.UserId {
+		http.Error(w, "you are not allowed to do this operation", http.StatusUnauthorized)
+		return
+	}
+	user, err := database.FindUserById(newUserInfo.Id)
+
+	if strings.TrimSpace(newUserInfo.NewPassword) != "" {
+		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(newUserInfo.OldPassword))
+		if err != nil {
+			http.Error(w, "you are not allowed to do this operation", http.StatusUnauthorized)
+			return
+		}
+		user.Password = []byte(newUserInfo.NewPassword)
+
+	}
+
+	if strings.TrimSpace(newUserInfo.Username) != "" {
+		user.Username = newUserInfo.Username
+	}
+	if strings.TrimSpace(newUserInfo.Email) != "" {
+		user.Email = newUserInfo.Email
+	}
+
+	err = database.UpdateUserInfo(user)
+	if err != nil {
+		http.Error(w, "could not update user", http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(UserInfoResp{
+		Id:       user.Id,
+		Username: user.Username,
+		Email:    user.Email,
+	})
 }

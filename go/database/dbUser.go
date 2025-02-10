@@ -36,12 +36,12 @@ type PUserResource struct {
 
 func UpdateUserResources(res PUserResource) error {
 	if res.Money != nil {
-		_, err := db.Exec(`INSERT INTO ?(money) VALUES(?)`, UserResourceTable, *res.Money)
+		_, err := db.Exec(`UPDATE user_resources SET money = ? WHERE user_id = ?`, *res.Money, res.UserId)
 		if err != nil {
 			return err
 		}
 	} else if res.Prestige != nil {
-		_, err := db.Exec(`INSERT INTO ?(prestige) VALUES(?)`, UserResourceTable, *res.Prestige)
+		_, err := db.Exec(`UPDATE user_resources SET prestige = ? WHERE user_id = ?`, *res.Prestige, res.UserId)
 		if err != nil {
 			return err
 		}
@@ -57,4 +57,12 @@ func EmailExists(email string) (bool, error) {
 		return false, err
 	}
 	return count > 0, nil
+}
+
+func UpdateUserInfo(user User) error {
+	_, err := db.Exec(`UPDATE users SET username = ?, password = ?, email = ? WHERE id = ?`, user.Username, user.Password, user.Email, user.Id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
