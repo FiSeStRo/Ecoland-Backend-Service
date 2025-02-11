@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -174,6 +175,7 @@ func GetUserResources(w http.ResponseWriter, req *http.Request) {
 
 	if err != nil {
 		http.Error(w, "invalid token", http.StatusUnauthorized)
+		return
 	}
 
 	db := database.GetDB()
@@ -249,7 +251,8 @@ func FindUser(username string) (User, error) {
 
 // CreateUser creates a user with user details and inits user resources
 func CreateUser(user User) error {
-
+	log.Println("new username", user.Username)
+	log.Println("new email", user.Email)
 	userId, err := AddUser(user)
 	if err != nil {
 		return err
@@ -356,6 +359,7 @@ func UpdateUserInfo(w http.ResponseWriter, req *http.Request) {
 	if strings.TrimSpace(newUserInfo.Username) != "" {
 		user.Username = newUserInfo.Username
 	}
+	log.Println("new user info mail ", newUserInfo.Email)
 	if strings.TrimSpace(newUserInfo.Email) != "" {
 		user.Email = newUserInfo.Email
 	}
