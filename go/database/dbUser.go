@@ -1,5 +1,7 @@
 package database
 
+import "log"
+
 func FindUserById(userId int) (User, error) {
 
 	stmt, err := db.Prepare(`SELECT id, username, password FROM users WHERE id = ?`)
@@ -62,6 +64,7 @@ func EmailExists(email string) (bool, error) {
 func UpdateUserInfo(user User) error {
 	_, err := db.Exec(`UPDATE users SET username = ?, password = ?, email = ? WHERE id = ?`, user.Username, user.Password, user.Email, user.Id)
 	if err != nil {
+		log.Print(err)
 		return err
 	}
 	return nil
