@@ -10,8 +10,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v1
 
+      - name: Install docker-compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
       - name: Start Docker Compose services
-        run: docker-compose -f "docker-compose.yml" up -d --build
+        run: docker compose up -d
 
       - name: Wait for API services to be ready
         run: |
