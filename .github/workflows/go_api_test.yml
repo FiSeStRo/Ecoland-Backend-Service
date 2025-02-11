@@ -49,7 +49,7 @@ jobs:
             ${{ runner.os }}-go-
 
       - name: Start go service
-        run: /
+        run: |
           cd go
           go run *.go
 
