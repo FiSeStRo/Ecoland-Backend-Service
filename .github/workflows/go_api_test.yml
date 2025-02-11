@@ -31,7 +31,7 @@ jobs:
           mkdir -p go
           echo "DB_USER=${{ secrets.DB_USER }}" > go/.env
           echo "DB_PW=${{ secrets.DB_PW }}" >> go/.env
-          echo "DB_HOST=${{secrets.DB_HOST}} >> go/.env
+          echo "DB_HOST=${{secrets.DB_HOST}}" >> go/.env
           echo "DB_PORT=${{ secrets.DB_PORT }}" >> go/.env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> go/.env
 
