@@ -28,6 +28,7 @@ func main() {
 		log.Println("error with env", err)
 	}
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", os.Getenv("DB_USER"), os.Getenv("DB_PW"), os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_NAME"))
+	log.Println(dsn)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Panicln("panic can't open db", err)

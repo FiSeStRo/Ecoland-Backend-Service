@@ -12,10 +12,10 @@ services:
     container_name: mariadb
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PW}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PW}
+      MYSQL_ROOT_PASSWORD: maria123
+      MYSQL_DATABASE: mariadb
+      MYSQL_USER: maria
+      MYSQL_PASSWORD: maria123
     ports:
       - "3306:3306"
   redis:

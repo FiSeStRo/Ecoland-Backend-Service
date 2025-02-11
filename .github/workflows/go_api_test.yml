@@ -5,7 +5,6 @@ on: [push, pull_request]
 jobs:
   test-api:
     runs-on: ubuntu-latest
-    environment: dev
 
     steps:
       - name: Checkout repository
@@ -32,6 +31,9 @@ jobs:
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_PORT: ${{ secrets.DB_PORT }}
         run: docker compose up -d
+
+      - name: Check container status
+        run: docker ps
 
       - name: Wait for API services to be ready
         run: |
