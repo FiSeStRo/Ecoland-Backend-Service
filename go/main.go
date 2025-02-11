@@ -86,6 +86,7 @@ func main() {
 	mux.HandleFunc("/user/resources", service.GetUserResources)
 	mux.HandleFunc("GET /user/info", service.GetUserInfo)
 	mux.HandleFunc("PATCH /user/info", service.UpdateUserInfo)
+	mux.HandleFunc("GET /health", service.HealthCheck)
 	mux.HandleFunc("/", root)
 	log.Fatal(http.ListenAndServe(":8081", enableCors(mux)))
 }
