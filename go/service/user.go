@@ -61,7 +61,6 @@ func SignIn(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Wrong username or password", 400)
 		return
 	}
-
 	err = bcrypt.CompareHashAndPassword(user.Password, []byte(signInUser.Password))
 	if err != nil {
 		http.Error(w, "Wrong username or password", 400)
@@ -349,8 +348,12 @@ func UpdateUserInfo(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, "you are not allowed to do this operation", http.StatusUnauthorized)
 			return
 		}
-		user.Password = []byte(newUserInfo.NewPassword)
+		user.Password, err = bcrypt.GenerateFromPassword([]byte(newUserInfo.NewPassword), bcrypt.MinCost)
 
+		if err != nil {
+			http.Error(w, "upps something went wrong please try again", 400)
+			return
+		}
 	}
 
 	if strings.TrimSpace(newUserInfo.Username) != "" {
