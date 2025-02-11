@@ -5,6 +5,8 @@ services:
     - "8080:80"
   go-be-service:
     build: ./go
+    env_file:
+    - ./go/.env
     ports:
       - "8081:8081"
   mariadb-service:
