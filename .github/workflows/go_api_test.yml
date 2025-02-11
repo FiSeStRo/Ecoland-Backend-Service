@@ -19,7 +19,7 @@ jobs:
           mkdir -p go
           echo "DB_USER=${{ secrets.DB_USER }}" > go/.env
           echo "DB_PW=${{ secrets.DB_PW }}" >> go/.env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> go/.env
+          echo "DB_HOST=localhost" >> go/.env
           echo "DB_PORT=${{ secrets.DB_PORT }}" >> go/.env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> go/.env
 
@@ -34,6 +34,24 @@ jobs:
 
       - name: Check container status
         run: docker ps
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.23"
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Start go service
+        run: /
+          cd go
+          go run *.go
 
       - name: Wait for API services to be ready
         run: |
