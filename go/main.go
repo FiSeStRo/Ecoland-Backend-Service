@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/FiSeStRo/Ecoland-Backend-Service/database"
@@ -26,8 +27,8 @@ func main() {
 	if err != nil {
 		log.Println("error with env", err)
 	}
-	// dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", os.Getenv("DB_USER"), os.Getenv("DB_PW"), os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_NAME"))
-	dsn := fmt.Sprintf("maria:maria123@tcp(mariadb-service:3306)/mariadb")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", os.Getenv("DB_USER"), os.Getenv("DB_PW"), os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_NAME"))
+	// dsn := fmt.Sprintf("maria:maria123@tcp(mariadb-service:3306)/mariadb")
 	log.Println(dsn)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
