@@ -1,6 +1,18 @@
-name: Automated API Tests
+name: API Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**.go"
+      - "go.mod"
+      - "go.sum"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**.go"
+      - "go.mod"
+      - "go.sum"
 
 jobs:
   test-api:
@@ -35,24 +47,6 @@ jobs:
       - name: Check container status
         run: docker ps
 
-      #   - name: Set up Go
-      #     uses: actions/setup-go@v4
-      #     with:
-      #       go-version: "1.23"
-
-      #   - name: Cache Go modules
-      #     uses: actions/cache@v3
-      #     with:
-      #       path: ~/go/pkg/mod
-      #       key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-      #       restore-keys: |
-      #         ${{ runner.os }}-go-
-
-      #   - name: Start go service
-      #     run: |
-      #       cd go
-      #       go run *.go
-
       - name: Wait for API services to be ready
         run: |
           for i in {1..30}; do
@@ -75,8 +69,12 @@ jobs:
       - name: Install Apidog CLI
         run: npm install -g apidog-cli
 
-      - name: Run API Test Scenario
-        run: apidog run --access-token $APIDOG_ACCESS_TOKEN -t 955624 -e 3096210 -n 1 -r html,cli
+      - name: Run API Test Scenarios
+        run: |
+          apidog run --access-token $APIDOG_ACCESS_TOKEN -t 955624 -e 3096210 -n 1 -r html,cli
+          apidog run --access-token $APIDOG_ACCESS_TOKEN -t 955654 -e 3096210 -n 1 -r html,cli
+          apidog run --access-token $APIDOG_ACCESS_TOKEN -t 955695 -e 3096210 -n 1 -r html,cli
+          apidog run --access-token $APIDOG_ACCESS_TOKEN -t 955727 -e 3096210 -n 1 -r html,cli
         env:
           APIDOG_ACCESS_TOKEN: ${{ secrets.APIDOG_ACCESS_TOKEN }}
 
