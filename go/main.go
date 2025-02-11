@@ -28,6 +28,8 @@ func main() {
 		log.Println("error with env", err)
 	}
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", os.Getenv("DB_USER"), os.Getenv("DB_PW"), os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_NAME"))
+	// dsn := fmt.Sprintf("maria:maria123@tcp(mariadb-service:3306)/mariadb")
+	log.Println(dsn)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Panicln("panic can't open db", err)
@@ -85,6 +87,8 @@ func main() {
 	// user
 	mux.HandleFunc("/user/resources", service.GetUserResources)
 	mux.HandleFunc("GET /user/info", service.GetUserInfo)
+	mux.HandleFunc("PATCH /user/info", service.UpdateUserInfo)
+	mux.HandleFunc("/health", service.HealthCheck)
 	mux.HandleFunc("/", root)
 	log.Fatal(http.ListenAndServe(":8081", enableCors(mux)))
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -61,7 +62,6 @@ func SignIn(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Wrong username or password", 400)
 		return
 	}
-
 	err = bcrypt.CompareHashAndPassword(user.Password, []byte(signInUser.Password))
 	if err != nil {
 		http.Error(w, "Wrong username or password", 400)
@@ -174,6 +174,7 @@ func GetUserResources(w http.ResponseWriter, req *http.Request) {
 
 	if err != nil {
 		http.Error(w, "invalid token", http.StatusUnauthorized)
+		return
 	}
 
 	db := database.GetDB()
@@ -249,7 +250,8 @@ func FindUser(username string) (User, error) {
 
 // CreateUser creates a user with user details and inits user resources
 func CreateUser(user User) error {
-
+	log.Println("new username", user.Username)
+	log.Println("new email", user.Email)
 	userId, err := AddUser(user)
 	if err != nil {
 		return err
@@ -349,13 +351,18 @@ func UpdateUserInfo(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, "you are not allowed to do this operation", http.StatusUnauthorized)
 			return
 		}
-		user.Password = []byte(newUserInfo.NewPassword)
+		user.Password, err = bcrypt.GenerateFromPassword([]byte(newUserInfo.NewPassword), bcrypt.MinCost)
 
+		if err != nil {
+			http.Error(w, "upps something went wrong please try again", 400)
+			return
+		}
 	}
 
 	if strings.TrimSpace(newUserInfo.Username) != "" {
 		user.Username = newUserInfo.Username
 	}
+	log.Println("new user info mail ", newUserInfo.Email)
 	if strings.TrimSpace(newUserInfo.Email) != "" {
 		user.Email = newUserInfo.Email
 	}
