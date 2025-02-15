@@ -135,8 +135,8 @@ class Response{
 
     private function handleResponseContentAuthentication(InternalStatus &$status){
         $this->m_Content = (object)[
-            'access_token' => $status->getAuthAccessToken(),
-            'refresh_token' => $status->getAuthRefreshToken(),
+            'accessToken' => $status->getAuthAccessToken(),
+            'refreshToken' => $status->getAuthRefreshToken(),
         ];
     }
 
