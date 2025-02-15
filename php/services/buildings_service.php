@@ -46,7 +46,7 @@ class BuildingDefinition
             $status = $db->executeStatement();
             if ($status->isValidStatus()) {
                 foreach ($status->getData() as $production) {
-                    array_push($this->production_list, $production["production_id"]);
+                    array_push($this->production_list, $production);
                 }
             }
         }
