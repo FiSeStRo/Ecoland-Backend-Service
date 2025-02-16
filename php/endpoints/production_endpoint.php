@@ -7,6 +7,7 @@ class ProductionEndpoint extends Endpoint{
         parent::__construct($command, $params, $authHandler);
 
         $this->registerCommand('start', 'startProduction', CommandType::PostJson, true);       
+        $this->registerCommand('cancel', 'cancelProduction', CommandType::GetWithParams, true);
     }
 
     private function startProduction() : InternalStatus{
@@ -19,6 +20,10 @@ class ProductionEndpoint extends Endpoint{
         
         $productionService = new ProductionService;
         return $productionService->startProduction($buildingId, $currentUserId, $productionDefId, $numCycles);       
+    }
+
+    private function cancelProduction() : InternalStatus{
+        return new InternalStatus(RequestStatus::Undefined);
     }
 }
 

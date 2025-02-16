@@ -108,6 +108,16 @@ class ProductionService{
         return $this->createProductionOrder($buildingId, $userId, $productionDefinition, $numCycles);
     }
 
+    public function cancelAllActiveProductionOrders() : InternalStatus{
+        // TODO: Implementation
+        return new InternalStatus(RequestStatus::Undefined);
+    }
+
+    public function cancelProductionOrder(int $productionOrderId) : InternalStatus{
+        
+        return new InternalStatus(RequestStatus::Undefined);
+    }
+
     public function finishProductionOrder(array &$order) : InternalStatus{
 
         $timeEnd = strtotime($order["time_end"]);
