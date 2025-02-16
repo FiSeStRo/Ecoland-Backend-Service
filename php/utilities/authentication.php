@@ -6,19 +6,25 @@ use Firebase\JWT\ExpiredException;
 
 class AuthenticationHandler{
 
-    public function createAuthToken(int $userId) : string{
-        // TODO: probably remove userId later, maybe use valid endpoints?
+    public function createAuthToken(int $userId, bool $isAuthToken) : string{
+        $userService = new UserService();
+        if( !$userService->doesUserWithIdExist($userId)){
+            return "";
+        }
+
         $this->m_UserId = $userId;
+
+        $duration = ($isAuthToken) ? self::JWT_AUTH_TOKEN_LIFESPAN_IN_MINS : self::JWT_REFRESH_TOKEN_LIFESPAN_IN_MINS;
 
         $jwtPayload = [
             self::JWT_PAYLOAD_KEY_ISSUER => self::JWT_ISSUER,
             self::JWT_PAYLOAD_KEY_SUBJECT => "$userId",
             self::JWT_PAYLOAD_KEY_ISSUED_AT => time(),
-            self::JWT_PAYLOAD_KEY_EXPIRATION => time() + self::JWT_AUTH_TOKEN_LIFESPAN_IN_MINS * 60,
+            self::JWT_PAYLOAD_KEY_EXPIRATION => time() + $duration * 60,
         ];
 
         $jwt = JWT::encode($jwtPayload, self::JWT_KEY, self::JWT_ALGORITHM);   
-        return $jwt;    
+        return $jwt;
     }
 
     public function validateAuthToken() : bool{
@@ -55,7 +61,7 @@ class AuthenticationHandler{
         }
 
         // Valid token -> store user Id 
-        $this->m_UserId = $decodedToken[self::JWT_PAYLOAD_KEY_SUBJECT];
+        $this->m_UserId = $decodedToken[self::JWT_PAYLOAD_KEY_SUBJECT];        
         return true;
     }
 
@@ -74,7 +80,7 @@ class AuthenticationHandler{
                 return get_object_vars($decodedToken);
             }
         } 
-        catch( DomainException | ExpiredException $e){
+        catch( DomainException | ExpiredException $e){            
             return false;
         }
 
