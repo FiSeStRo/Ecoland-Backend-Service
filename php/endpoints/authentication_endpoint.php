@@ -11,7 +11,7 @@ class AuthenticationEndpoint extends Endpoint{
 
         $this->registerCommand('sign-up', 'signUp', CommandType::PostJson);
         $this->registerCommand('sign-in', 'signIn', CommandType::PostJson);
-        $this->registerCommand('refresh-token', 'refreshToken',CommandType::PostJson);
+        $this->registerCommand('refresh-token', 'refreshToken',CommandType::Get, true);
     }
 
     public function signUp() : InternalStatus{
@@ -49,15 +49,19 @@ class AuthenticationEndpoint extends Endpoint{
         else{
             // Create Authentication Token and save in Internal Status
             $authStatus = new InternalStatus(RequestStatus::ValidAuthentification);
-            $authStatus->setAuthTokens($this->createAuthToken($userId));
+            $authStatus->setAuthTokens($this->createAuthToken($userId, true), $this->createAuthToken($userId, false));
             return $authStatus;
         }
     }
 
     public function refreshToken() : InternalStatus{
-        $refreshParams = $this->getParams();
+        $userId = $this->getCurrentUserId();
         
-        // TODO: Implementation
+        if( $userId > 0){
+            $authStatus = new InternalStatus(RequestStatus::ValidAuthentification);
+            $authStatus->setAuthTokens($this->createAuthToken($userId, true), $this->createAuthToken($userId, false));
+            return $authStatus;
+        }
         return new InternalStatus(RequestStatus::Undefined);
     }
     
