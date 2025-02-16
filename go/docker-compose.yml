@@ -4,6 +4,9 @@ services:
     ports:
       - "8081:8081"
     restart: always
+    depends_on:
+      mariadb-service:
+        condition: service_started
   mariadb-service:
     image: mariadb:latest
     container_name: mariadb_go

@@ -11,6 +11,7 @@ class AuthenticationEndpoint extends Endpoint{
 
         $this->registerCommand('sign-up', 'signUp', CommandType::PostJson);
         $this->registerCommand('sign-in', 'signIn', CommandType::PostJson);
+        $this->registerCommand('refresh-token', 'refreshToken',CommandType::PostJson);
     }
 
     public function signUp() : InternalStatus{
@@ -51,6 +52,13 @@ class AuthenticationEndpoint extends Endpoint{
             $authStatus->setAuthTokens($this->createAuthToken($userId));
             return $authStatus;
         }
+    }
+
+    public function refreshToken() : InternalStatus{
+        $refreshParams = $this->getParams();
+        
+        // TODO: Implementation
+        return new InternalStatus(RequestStatus::Undefined);
     }
     
     private UserService $m_UserService;

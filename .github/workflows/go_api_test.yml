@@ -1,0 +1,82 @@
+name: API Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**.go"
+      - "go.mod"
+      - "go.sum"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**.go"
+      - "go.mod"
+      - "go.sum"
+
+jobs:
+  test-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Install docker-compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+      - name: Create go/.env file
+        run: |
+          mkdir -p go
+          echo "DB_USER=${{ secrets.DB_USER }}" > go/.env
+          echo "DB_PW=${{ secrets.DB_PW }}" >> go/.env
+          echo "DB_HOST=${{secrets.DB_HOST}}" >> go/.env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> go/.env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> go/.env
+
+      - name: Start Docker Compose services
+        env:
+          DB_PW: ${{ secrets.DB_PW }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+        run: docker compose up -d
+
+      - name: Check container status
+        run: docker ps
+
+      - name: Wait for API services to be ready
+        run: |
+          for i in {1..30}; do
+            docker ps
+            if curl -s http://localhost:8081/; then
+              echo ""Service is up and helthy""
+              exit 0
+            fi
+            echo "Waiting for service..."
+            sleep 2
+          done
+          echo "Service did not become ready in time." >&2
+          exit 1
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Install Apidog CLI
+        run: npm install -g apidog-cli
+
+      - name: Run API Test Scenarios
+        run: |
+          apidog run --access-token $APIDOG_ACCESS_TOKEN -t 955624 -e 3096210 -n 1 -r html,cli
+          apidog run --access-token $APIDOG_ACCESS_TOKEN -t 955654 -e 3096210 -n 1 -r html,cli
+          apidog run --access-token $APIDOG_ACCESS_TOKEN -t 955695 -e 3096210 -n 1 -r html,cli
+          apidog run --access-token $APIDOG_ACCESS_TOKEN -t 955727 -e 3096210 -n 1 -r html,cli
+        env:
+          APIDOG_ACCESS_TOKEN: ${{ secrets.APIDOG_ACCESS_TOKEN }}
+
+      - name: Shutdown Docker Compose services
+        run: docker-compose down
