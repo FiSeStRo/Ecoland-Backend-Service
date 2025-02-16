@@ -1,9 +1,11 @@
 <?php
 
-class AdministratorEndpoint extends Endpoint{
+class AdministratorEndpoint extends Endpoint
+{
     use CommandHandlingTrait;
 
-    public function __construct(string $command, array $params, AuthenticationHandler &$authHandler){
+    public function __construct(string $command, array $params, AuthenticationHandler &$authHandler)
+    {
         parent::__construct($command, $params, $authHandler);
 
         $this->registerCommand('setupDatabase', 'setupDatabase');
@@ -11,8 +13,9 @@ class AdministratorEndpoint extends Endpoint{
         $this->registerCommand('resetDatabase', 'resetDatabase');
     }
 
-    private function setupDatabase(){
-        if( !DEVELOPER_MODE_ENABLED ){
+    private function setupDatabase()
+    {
+        if (!DEVELOPER_MODE_ENABLED) {
             return;
         }
 
@@ -20,8 +23,9 @@ class AdministratorEndpoint extends Endpoint{
         return $setupService->setupDatabase();
     }
 
-    private function initDefinitionData() : InternalStatus{
-        if( !DEVELOPER_MODE_ENABLED ){
+    private function initDefinitionData(): InternalStatus
+    {
+        if (!DEVELOPER_MODE_ENABLED) {
             return new InternalStatus(RequestStatus::DevModeRequired);
         }
 
@@ -29,8 +33,9 @@ class AdministratorEndpoint extends Endpoint{
         return $setupService->initDefinitionData();
     }
 
-    private function resetDatabase() : InternalStatus{
-        if( !DEVELOPER_MODE_ENABLED ){
+    private function resetDatabase(): InternalStatus
+    {
+        if (!DEVELOPER_MODE_ENABLED) {
             return new InternalStatus(RequestStatus::DevModeRequired);
         }
 
@@ -38,5 +43,3 @@ class AdministratorEndpoint extends Endpoint{
         return $setupService->resetDatabase();
     }
 }
-
-?>

@@ -1,9 +1,13 @@
 services:
   php-be-service:
+    profiles:
+    - php
     build: ./php
     ports:
     - "8080:80"
   go-be-service:
+    profiles:
+      - go
     build: ./go
     env_file:
     - ./go/.env
@@ -13,6 +17,7 @@ services:
     depends_on:
       mariadb-service:
         condition: service_started
+    
   mariadb-service:
     image: mariadb:latest
     container_name: mariadb

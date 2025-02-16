@@ -42,7 +42,7 @@ jobs:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_PORT: ${{ secrets.DB_PORT }}
-        run: docker compose up -d
+        run: docker compose --profile go up -d
 
       - name: Check container status
         run: docker ps
@@ -52,7 +52,7 @@ jobs:
           for i in {1..30}; do
             docker ps
             if curl -s http://localhost:8081/; then
-              echo ""Service is up and helthy""
+              echo ""Service is up and healthy""
               exit 0
             fi
             echo "Waiting for service..."
