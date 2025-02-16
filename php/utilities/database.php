@@ -202,7 +202,7 @@ class DatabaseHandler
         // manual query, since DatabaseHandler::executeQuery() does only work with an initialized
         // database handler - which requires a selected database (that we might be about to create).
         if (DATABASE_EXECUTE_ENABLED) {
-            $sql = "CREATE DATABASE IF NOT EXISTS " . self::DB_DEFAULT_DATABASE . ";";
+            $sql = "CREATE DATABASE IF NOT EXISTS " . getenv('DB_NAME') . ";";
             try {
                 $this->m_DbHandle->query($sql);
             } catch (mysqli_sql_exception $e) {
@@ -214,12 +214,12 @@ class DatabaseHandler
     private function initializeDatabase()
     {
         try {
-            $this->m_DbHandle = new mysqli(self::DB_HOST, self::DB_USER, self::DB_PASSWORD, null, self::DB_PORT);
+            $this->m_DbHandle = new mysqli(getenv(self::ENV_DB_HOST), getenv(self::ENV_DB_USER), getenv(self::ENV_DB_PASSWORD), null, getenv(self::ENV_DB_PORT));
 
             $this->createDatabase();
 
             if (DATABASE_EXECUTE_ENABLED) {
-                $this->m_DbHandle->select_db(self::DB_DEFAULT_DATABASE);
+                $this->m_DbHandle->select_db(getenv(self::ENV_DB_NAME));
                 $this->m_IsDatabaseSelected = true;
             } else {
                 trigger_error("Database Query Execution is disabled.", E_USER_WARNING);
@@ -311,11 +311,11 @@ class DatabaseHandler
         return false;
     }
 
-    private const DB_HOST = 'mariadb-service';
-    private const DB_USER = 'maria';
-    private const DB_PASSWORD = 'maria123';
-    private const DB_DEFAULT_DATABASE = 'mariadb';
-    private const DB_PORT = 3306;
+    private const ENV_DB_HOST = 'DB_HOST';
+    private const ENV_DB_USER = 'DB_USER';
+    private const ENV_DB_PASSWORD = 'DB_PW';
+    private const ENV_DB_NAME = 'DB_NAME';
+    private const ENV_DB_PORT = 'DB_PORT';
 
     private $m_DbHandle = null;
     private $m_IsDatabaseSelected = false;

@@ -150,8 +150,8 @@ class Endpoint
         return $this->m_AuthHandler->validateAuthToken();
     }
     
-    protected function createAuthToken(int $userId) : string{
-        return ($userId > 0) ?$this->m_AuthHandler->createAuthToken($userId) : '';
+    protected function createAuthToken(int $userId, bool $isAuthToken) : string{
+        return ($userId > 0) ?$this->m_AuthHandler->createAuthToken($userId, $isAuthToken) : '';
     }
 
     private function validateCommandType(CommandType $type): RequestStatus

@@ -6,19 +6,25 @@ use Firebase\JWT\ExpiredException;
 
 class AuthenticationHandler{
 
-    public function createAuthToken(int $userId) : string{
-        // TODO: probably remove userId later, maybe use valid endpoints?
+    public function createAuthToken(int $userId, bool $isAuthToken) : string{
+        $userService = new UserService();
+        if( !$userService->doesUserWithIdExist($userId)){
+            return "";
+        }
+
         $this->m_UserId = $userId;
+
+        $duration = ($isAuthToken) ? getenv(self::ENV_JWT_ACCESS_TOKEN_DURATION) : getenv(self::ENV_JWT_REFRESH_TOKEN_DURATION);
 
         $jwtPayload = [
             self::JWT_PAYLOAD_KEY_ISSUER => self::JWT_ISSUER,
             self::JWT_PAYLOAD_KEY_SUBJECT => "$userId",
             self::JWT_PAYLOAD_KEY_ISSUED_AT => time(),
-            self::JWT_PAYLOAD_KEY_EXPIRATION => time() + self::JWT_AUTH_TOKEN_LIFESPAN_IN_MINS * 60,
+            self::JWT_PAYLOAD_KEY_EXPIRATION => time() + $duration * 60,
         ];
 
-        $jwt = JWT::encode($jwtPayload, self::JWT_KEY, self::JWT_ALGORITHM);   
-        return $jwt;    
+        $jwt = JWT::encode($jwtPayload, getenv(self::ENV_JWT_SECRET), self::JWT_ALGORITHM);   
+        return $jwt;
     }
 
     public function validateAuthToken() : bool{
@@ -55,7 +61,7 @@ class AuthenticationHandler{
         }
 
         // Valid token -> store user Id 
-        $this->m_UserId = $decodedToken[self::JWT_PAYLOAD_KEY_SUBJECT];
+        $this->m_UserId = $decodedToken[self::JWT_PAYLOAD_KEY_SUBJECT];        
         return true;
     }
 
@@ -70,11 +76,11 @@ class AuthenticationHandler{
             if( is_array($headerValues) && count($headerValues) >= 2 )
             {
                 $jwt = $headerValues[1];               
-                $decodedToken = JWT::decode($jwt, new Key(self::JWT_KEY, self::JWT_ALGORITHM));               
+                $decodedToken = JWT::decode($jwt, new Key(getenv(self::ENV_JWT_SECRET), self::JWT_ALGORITHM));               
                 return get_object_vars($decodedToken);
             }
         } 
-        catch( DomainException | ExpiredException $e){
+        catch( DomainException | ExpiredException $e){            
             return false;
         }
 
@@ -104,7 +110,6 @@ class AuthenticationHandler{
 
     private int $m_UserId = 0;
     private const JWT_ISSUER = 'ecoland';
-    private const JWT_KEY = 'd3iMudd4s31g51chT';
     private const JWT_ALGORITHM = 'HS256';
 
     private const JWT_PAYLOAD_KEY_ISSUER = 'iss';
@@ -112,8 +117,10 @@ class AuthenticationHandler{
     private const JWT_PAYLOAD_KEY_EXPIRATION = 'exp';
     private const JWT_PAYLOAD_KEY_ISSUED_AT = 'iat';
 
-    private const JWT_AUTH_TOKEN_LIFESPAN_IN_MINS = 10;
-    private const JWT_REFRESH_TOKEN_LIFESPAN_IN_MINS = 60;
+    // Environment variable names
+    private const ENV_JWT_SECRET = 'JWT_SECRET';
+    private const ENV_JWT_ACCESS_TOKEN_DURATION = 'JWT_ACCESS_TOKEN_DURATION_IN_MINS';
+    private const ENV_JWT_REFRESH_TOKEN_DURATION = 'JWT_REFRESH_TOKEN_DURATION_IN_MINS';
 }
 
 ?>

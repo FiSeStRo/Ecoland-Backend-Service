@@ -33,6 +33,17 @@ include_once './endpoints/production_endpoint.php';
 include_once './endpoints/test_endpoint.php';
 include_once './endpoints/user_endpoint.php';
 
+// Set environment variables
+$env = file_get_contents(__DIR__."/.env");
+$lines = explode("\n",$env);
+foreach($lines as $line){
+    // Ignore comment lines ("#") or without a value after "="
+    preg_match("/([^#]+)\=(.*)/",$line,$matches);
+    if(isset($matches[2])){
+        putenv(trim($line));
+    }
+}
+
 $request = new RequestHandler();
 $request->handleRequest();
 
