@@ -1,5 +1,7 @@
 services:
   go-service:
+    profiles:
+      - go
     build: .
     ports:
       - "8082:8081"
