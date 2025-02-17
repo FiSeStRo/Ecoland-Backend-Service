@@ -14,21 +14,26 @@ type EcoUserClaims struct {
 	jwt.RegisteredClaims
 }
 
-var JwtVariables struct {
+type JWTSettings struct {
 	Key              []byte
 	ExpirationTime   int
 	ExpirationTimeRT int
 	Issuer           string
 }
 
+var JwtVariables JWTSettings
+
 // TODO: implement rotating keys with a db
 
 // CreateNewJWT creates a new jwt with a userId payload and set's the expiration times based on if the creation should be a refreshToken
 func CreateNewJWT(userId int, isRT bool) (string, error) {
+	fmt.Println(JwtVariables.ExpirationTime)
 	expirationTime := time.Duration(JwtVariables.ExpirationTime) * time.Second
 	if isRT {
 		expirationTime = time.Duration(JwtVariables.ExpirationTimeRT) * time.Second
 	}
+	fmt.Println(expirationTime)
+	fmt.Println(time.Now().Add(expirationTime))
 	claims := EcoUserClaims{
 		userId,
 		jwt.RegisteredClaims{
