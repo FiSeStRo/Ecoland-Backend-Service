@@ -6,7 +6,7 @@ class ProductionDefinition{
     public readonly int $id;
     public readonly string $token_name;
     public readonly float $cost;
-    public readonly float $base_duration;
+    public readonly int $base_duration;
     private array $products = [];
 
     public function __construct(int $def_id) {
@@ -78,7 +78,7 @@ class ProductionService{
 
         // Does production definition exist?
         $productionDefinition = $this->getDefinition(DefinitionType::Production, $productionDefId);        
-        if( !$productionDefinition->isValid){
+        if( $productionDefinition === false ){
             return new InternalStatus(RequestStatus::UnknownProductionDefinition);
         }
 
@@ -114,15 +114,105 @@ class ProductionService{
     }
 
     public function cancelProductionOrder(int $productionOrderId) : InternalStatus{
-        
-        return new InternalStatus(RequestStatus::Undefined);
+        $status = $this->getProductionOrder($productionOrderId);
+        if( !$status->isValidStatus()){
+            return $status;
+        }
+
+        $productionData = $status->getData();
+        $productionDefinition = $this->getDefinition(DefinitionType::Production, $productionData['production_id']);
+        if( $productionDefinition === false ){
+            return new InternalStatus(RequestStatus::UnknownProductionDefinition);
+        }
+
+        // Calculate the number of finished and unfinished cycles.
+        $numCyclesFinished = max(intdiv(time() - strtotime($productionData['time_start']), $productionDefinition->base_duration), 0);
+        $numCyclesUnfinished = max(intdiv(strtotime($productionData['time_end']) - time(), $productionDefinition->base_duration), 0);
+
+        // Retrieve the products from the finished cycles
+        $this->finishProductionOrder($productionData, $numCyclesFinished);
+
+        // Get the raw materials from the unfinished cyles back
+        $storageService = new StorageService();        
+        foreach( $productionDefinition->getProducts() as $product){
+            if( $product["is_input"]){
+                $amountToAdd = $numCyclesUnfinished * $product["amount"];
+                $storageStatus = $storageService->addProductToStorage($productionData['building_id'], $product["product_id"], $amountToAdd);
+                if( !$storageStatus->isValidStatus()){
+                    // TODO: products removed earlier are not restored
+                    return $storageStatus;
+                }
+            }
+        }
+
+        return new InternalStatus(RequestStatus::Valid);
     }
 
-    public function finishProductionOrder(array &$order) : InternalStatus{
+    public function getProductionOrder(int $productionOrderId) : InternalStatus{
+        $sql = "SELECT * FROM " . DbTables::ManufacturingOrders->value . " WHERE id = ?";
+        if($this->m_Db->createStatement($sql)){
+            $this->m_Db->bindStatementParamInt($productionOrderId);
+            $status = $this->m_Db->executeStatement();
+            if( !$status->isValidStatus()){
+                return $status;
+            }
+            $data = $status->getData();
+            return (empty($data)) ? new InternalStatus(RequestStatus::ProductionDoesNotExist) : $status;
+        }
+        return new InternalStatus(RequestStatus::DatabaseStmtCreationError);
+    }
 
-        $timeEnd = strtotime($order["time_end"]);
-        if( $timeEnd === false || $timeEnd > time()){
-            return new InternalStatus(RequestStatus::ProductionInvalidTimestamp);
+    public function getUserIdForProduction(int $productionId) : InternalStatus{
+        $status = $this->getProductionOrder($productionId);
+        if(!$status->isValidStatus()){
+            return $status;
+        }
+
+         $data = $status->getData();
+         $buildingId = $data['building_id'];
+         $buildingService = new BuildingService;
+         $buildingStatus = $buildingService->getUserIdForBuilding($buildingId);
+         return $buildingStatus;
+    }
+
+    public function doesProductionBelongToUserId(int $productionId, int $userId) : InternalStatus{
+        $status = $this->getUserIdForProduction($productionId);
+        $data = $status->getData();
+        if (empty($data)) {
+            return new InternalStatus(RequestStatus::ProductionDoesNotExist);
+        }
+
+        if ($status->isValidStatus()) {
+            return new InternalStatus(($userId == $data['user_id']) ? RequestStatus::Valid : RequestStatus::ProductionDoesNotBelongToUser);
+        }
+        return $status;
+    }
+
+    public function isProductionActive(int $productionId) : InternalStatus{
+        $sql = "SELECT is_completed FROM " . DbTables::ManufacturingOrders->value . " WHERE id = ?";
+        if( $this->m_Db->createStatement($sql)){
+            $this->m_Db->bindStatementParamInt($productionId);
+            $status = $this->m_Db->executeStatement();
+            if( !$status->isValidStatus() || $status->getNumAffectedRows() == 0){
+                return new InternalStatus(RequestStatus::ProductionDoesNotExist);
+            }
+
+            $data = $status->getData();
+            if( $data['is_completed'] == 1){
+                return new InternalStatus(RequestStatus::ProductionAlreadyCompleted);
+            }
+            return $status;
+        }
+        return new InternalStatus(RequestStatus::DatabaseStmtCreationError);
+    }
+
+    public function finishProductionOrder(array &$order, $canceledAfterNumCycles = -1) : InternalStatus{
+
+        if( $canceledAfterNumCycles < 0 ){
+            $timeEnd = strtotime($order["time_end"]);
+            if( $timeEnd === false || $timeEnd > time()){
+                return new InternalStatus(RequestStatus::ProductionInvalidTimestamp);
+            }
         }
         
         if( $order["is_completed"] ){
@@ -136,7 +226,7 @@ class ProductionService{
         $financeService = new FinanceService;
 
         $buildingId = $order["building_id"];              
-        $numCycles = $order["cycles"];
+        $numCycles = ($canceledAfterNumCycles >= 0) ? $canceledAfterNumCycles : $order["cycles"]; // first case can be used for cancelling orders, where only part of the production is finished.
         $userIdStatus = $buildingService->getUserIdForBuilding($buildingId);
         if( !$userIdStatus->isValidStatus()){
             return $userIdStatus;
@@ -218,7 +308,7 @@ class ProductionService{
         }
 
         return new InternalStatus(RequestStatus::DatabaseStmtCreationError);
-    }   
+    }
 }
 
 ?>
