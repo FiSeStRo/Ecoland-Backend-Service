@@ -8,7 +8,7 @@ class TestEndpoint extends Endpoint{
 
         $this->registerCommand('isItAlive', 'testIsItAlive');
         $this->registerCommand('isItAuthenticated', 'testIsItAuthenticated', CommandType::Get, true);
-        $this->registerCommand('isGetAlive', 'testIsGetAlive', CommandType::GetWithParams);
+        $this->registerCommand('isGetAlive', 'testIsGetAlive', CommandType::GetWithId);
         $this->registerCommand('isPostAlive', 'testIsPostAlive', CommandType::PostFormData);
         $this->registerCommand('isDatabaseAlive', 'testIsDatabaseAlive', CommandType::Get);
     }

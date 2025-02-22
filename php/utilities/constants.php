@@ -60,5 +60,7 @@ enum RequestStatus : string{
     // Production Errors
     case ProductionInvalidTimestamp = 'ProductionInvalidTimestamp';
     case ProductionAlreadyCompleted = 'ProductionAlreadyCompleted';
+    case ProductionDoesNotExist = 'ProductionDoesNotExist';
+    case ProductionDoesNotBelongToUser = 'ProductionDoesNotBelongToUser';
 }
 ?>
