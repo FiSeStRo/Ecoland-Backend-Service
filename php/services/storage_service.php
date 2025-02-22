@@ -88,7 +88,7 @@ class StorageService
         $sql = "SELECT * FROM " . DbTables::Storage->value . " WHERE building_id = ?";
         if ($this->m_Db->createStatement($sql)) {
             $this->m_Db->bindStatementParamInt($buildingId);
-            return $this->m_Db->executeStatement();
+            return $this->m_Db->executeStatement(false, true);
         }
         return new InternalStatus(RequestStatus::DatabaseStmtCreationError);
     }

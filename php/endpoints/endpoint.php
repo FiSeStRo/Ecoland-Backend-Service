@@ -3,7 +3,7 @@
 enum CommandType
 {
     case Get;
-    case GetWithParams;
+    case GetWithId;
     case PostFormData; // Content-Type multipart/form-data
     case PostJson; // Content-Type application/json
 }
@@ -54,7 +54,7 @@ class Endpoint
         }
 
         switch($currenctCommandType){
-            case CommandType::GetWithParams;
+            case CommandType::GetWithId;
                 return $this->m_Params['GET'];
             case CommandType::PostFormData;
             case CommandType::PostJson;
@@ -161,7 +161,7 @@ class Endpoint
 
     private function validateCommandType(CommandType $type): RequestStatus
     {
-        if ($type == CommandType::GetWithParams && empty($this->m_Params['GET'])) {
+        if ($type == CommandType::GetWithId && (empty($this->m_Params['GET']) || intval($this->m_Params['GET']['id']) == 0)) {
             return RequestStatus::MissingRequiredParamsGet;
         } else if ($type == CommandType::PostFormData && empty($this->m_Params['POST'])) {
             return RequestStatus::MissingRequiredParamsPost;
