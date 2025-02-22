@@ -6,7 +6,7 @@ class BuildingEndpoint extends Endpoint {
     public function __construct(string $command, array $params, AuthenticationHandler &$authHandler) {
         parent::__construct($command, $params, $authHandler);
 
-        $this->registerCommand('construct', 'constructBuilding', CommandType::PostJson, true);
+        $this->registerCommand('construct', 'constructBuilding', CommandType::PostJson, UserLevel::User);
     }   
 
     public function constructBuilding() : InternalStatus{
