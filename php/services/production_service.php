@@ -130,7 +130,10 @@ class ProductionService{
         $numCyclesUnfinished = max(intdiv(strtotime($productionData['time_end']) - time(), $productionDefinition->base_duration), 0);
 
         // Retrieve the products from the finished cycles
-        $this->finishProductionOrder($productionData, $numCyclesFinished);
+        $finishOrderStatus = $this->finishProductionOrder($productionData, $numCyclesFinished);
+        if( !$finishOrderStatus->isValidStatus()){
+            return $finishOrderStatus;
+        }
 
         // Get the raw materials from the unfinished cyles back
         $storageService = new StorageService();        
@@ -226,7 +229,7 @@ class ProductionService{
         $financeService = new FinanceService;
 
         $buildingId = $order["building_id"];              
-        $numCycles = ($canceledAfterNumCycles >= 0) ? $canceledAfterNumCycles : $order["cycles"]; // first case can be used for cancelling orders, where only part of the production is finished.
+        $numCycles = ($canceledAfterNumCycles >= 0 && $canceledAfterNumCycles < $order["cycles"]) ? $canceledAfterNumCycles : $order["cycles"]; // first case can be used for cancelling orders, where only part of the production is finished.
         $userIdStatus = $buildingService->getUserIdForBuilding($buildingId);
         if( !$userIdStatus->isValidStatus()){
             return $userIdStatus;
@@ -235,9 +238,10 @@ class ProductionService{
         if( $userId == 0 ){
             return new InternalStatus(RequestStatus::UserDoesNotExist);
         }       
-
-        if( $productionDefinition->isValid ){
+        
+        if( $productionDefinition->isValid && $numCycles > 0){
             // Add all the produced (= output) items to the storage
+            // (if there are any completed cycles (might not be the case on very early canceling)
             $productStatus = new InternalStatus(RequestStatus::Valid);
             $productList = $productionDefinition->getProducts();
             foreach($productList as $product){               
