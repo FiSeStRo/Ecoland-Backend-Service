@@ -56,6 +56,15 @@ class UserService{
         return $status->getNumAffectedRows() > 0;
     }
 
+    public function doesUserHaveUserLevel(int $userId, int $requiredUserLevel) : bool{
+        $userStatus = $this->getUserData($userId);
+        if( !$userStatus->isValidStatus() ){
+            return false;
+        }
+
+        $userLevel = intval($userStatus->getData()['role']);
+        return $userLevel >= $requiredUserLevel;
+    }
     
     private function doesUserWithEmailExist(string $email) : InternalStatus{
         if( !$this->isValidEmail($email)){
@@ -158,6 +167,17 @@ class UserService{
 
     private function isValidEmail(string $email) : bool{       
         return ( filter_var($email, FILTER_VALIDATE_EMAIL) !== false);
+    }
+
+    private function getUserData(int $userId) : InternalStatus{
+        $sql = "SELECT * FROM ". DbTables::Users->value ." WHERE id=?";
+        $status = new InternalStatus(RequestStatus::Undefined);
+        if($this->m_Db->createStatement($sql) ){
+            $this->m_Db->bindStatementParamInt($userId);
+            $status = $this->m_Db->executeStatement();           
+        }
+
+        return $status;
     }
 
     private const NEW_USER_DEFAULT_ROLE = 0;
