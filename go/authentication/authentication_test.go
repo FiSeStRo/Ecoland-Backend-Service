@@ -1,16 +1,22 @@
 package authentication
 
 import (
+	"fmt"
 	"testing"
 )
 
 const userId = 1
 const isRT = true
-const nIsRt = false
 
 var validToken string
 
 func TestCreatNewJWT(t *testing.T) {
+	JwtVariables = JWTSettings{
+		Key:              []byte("Key"),
+		ExpirationTime:   100,
+		ExpirationTimeRT: 1000,
+		Issuer:           "Issuer",
+	}
 
 	t.Run("create NewJWT", func(t *testing.T) {
 		st, err := CreateNewJWT(userId, isRT)
@@ -29,6 +35,7 @@ func TestValidateJWT(t *testing.T) {
 	t.Run("valid JWT", func(t *testing.T) {
 		claims, err := ValidateJWT(validToken)
 		if err != nil {
+			fmt.Println(err)
 			t.Errorf("the jwt could not be validated correctly")
 		}
 		if claims.UserId != 1 {
