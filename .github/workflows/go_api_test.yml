@@ -34,7 +34,7 @@ jobs:
           echo "DB_HOST=${{secrets.DB_HOST}}" >> go/.env
           echo "DB_PORT=${{ secrets.DB_PORT }}" >> go/.env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> go/.env
-          echo "JWT_KEY=${{secrets.JWT_KEY}}" >> go/.env
+          echo "JWT_SECRET=${{secrets.JWT_KEY}}" >> go/.env
           echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> go/.env
           echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> go/.env
           echo "JWT_ISSUER=${{secrets.JWT_ISSUER}}" >> go/.env
