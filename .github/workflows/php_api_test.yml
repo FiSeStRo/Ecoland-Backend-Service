@@ -1,0 +1,85 @@
+name: PhP e2e Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths:
+      - "**.php"
+      - "composer.json"
+
+jobs:
+  test-php:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: setup docker-compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Create php/.env file
+        run: |
+          mkdir -p php
+          echo "DB_USER=maria" > php/.env
+          echo "DB_PW=maria123" >> php/.env
+          echo "DB_HOST=mariadb-service" >> php/.env
+          echo "DB_PORT=3306" >> php/.env
+          echo "DB_NAME=mariadb" >> php/.env
+          echo "JWT_SECRET=${{secrets.JWT_SECRET}}" >> php/.env
+          echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> php/.env
+          echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> php/.env
+          echo "JWT_ISSUER=${{secrets.JWT_ISSUER}}" >> php/.env
+
+      - name: Start docker-compose service
+        env:
+          DB_PW: maria123
+          DB_USER: maria
+          DB_HOST: mariadb-service
+          DB_NAME: mariadb
+          DB_PORT: 3306
+          JWT_EXPIRATION_TIME_AT: ${{secrets.JWT_EXPIRATION_TIME_AT}}
+          JWT_EXPIRATION_TIME_RT: ${{secrets.JWT_EXPIRATION_TIME_RT}}
+          JWT_SECRET: ${{secrets.JWT_SECRET}}
+          JWT_ISSUER: ${{secrets.JWT_ISSUER}}
+        run: |
+          docker compose --profile php up -d
+          docker ps
+      - name: Wait for API services to be ready
+        run: |
+          for i in {1..30}; do
+            docker ps
+            if curl -s http://localhost:8080/; then
+              echo ""PhP Service is up and healthy""
+              exit 0
+            fi
+            echo "Waiting for service..."
+            sleep 2
+          done
+          echo "Service did not become ready in time." >&2
+          exit 1
+
+      - name: Setup php data
+        run: |
+          curl -s http://localhost:8080/admin/setupDatabase
+          curl -s http://localhost:8080/admin/initDefinitionData
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Install Apidog CLI
+        run: npm install -g apidog-cli
+
+      - name: Run API Test Scenarios
+        run: |
+          apidog run --access-token $APIDOG_ACCESS_TOKEN -t 831275 -e 2583121 -n 1 -r html,cli
+        env:
+          APIDOG_ACCESS_TOKEN: ${{ secrets.APIDOG_ACCESS_TOKEN }}
+
+      - name: Shutdown Docker Compose services
+        run: docker compose --profile php down

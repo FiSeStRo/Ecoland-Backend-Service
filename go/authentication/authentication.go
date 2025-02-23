@@ -23,7 +23,7 @@ type JWTSettings struct {
 
 var JwtVariables JWTSettings
 
-// TODO: implement rotating keys with a db
+// TODO: implement rotating keys with a redisdb
 
 // CreateNewJWT creates a new jwt with a userId payload and set's the expiration times based on if the creation should be a refreshToken
 func CreateNewJWT(userId int, isRT bool) (string, error) {

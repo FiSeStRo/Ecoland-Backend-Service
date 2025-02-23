@@ -37,7 +37,7 @@ func SetEnvVariables(parts []string) error {
 
 	var err error = nil
 	switch parts[0] {
-	case "JWT_KEY":
+	case "JWT_SECRET":
 		authentication.JwtVariables.Key = []byte(parts[1])
 	case "JWT_EXPIRATION_TIME_AT":
 		authentication.JwtVariables.ExpirationTime, err = strconv.Atoi(parts[1])
