@@ -3,6 +3,8 @@ services:
     profiles:
     - php
     build: ./php
+    env_file:
+      - ./php/.env
     ports:
     - "8080:80"
   go-be-service:

@@ -29,7 +29,7 @@ jobs:
           echo "DB_HOST=${{secrets.DB_HOST}}" >> php/.env
           echo "DB_PORT=${{ secrets.DB_PORT }}" >> php/.env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> php/.env
-          echo "JWT_SECRET=${{secrets.JWT_KEY}}" >> php/.env
+          echo "JWT_SECRET=${{secrets.JWT_SECRET}}" >> php/.env
           echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> php/.env
           echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> php/.env
           echo "JWT_ISSUER=${{secrets.JWT_ISSUER}}" >> php/.env
