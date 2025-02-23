@@ -53,8 +53,6 @@ jobs:
           for i in {1..30}; do
             docker ps
             if curl -s http://localhost:8080/; then
-              curl -s http://localhost:8080/admin/setupDatabase; then
-              curl -s http://localhost:8080/admin/initDefinitionData; then
               echo ""PhP Service is up and healthy""
               exit 0
             fi
@@ -63,10 +61,16 @@ jobs:
           done
           echo "Service did not become ready in time." >&2
           exit 1
-          - name: Setup Node.js environment
-          uses: actions/setup-node@v2
-          with:
-            node-version: "14"
+
+      - name: Setup php data
+        run: |
+          curl -s http://localhost:8080/admin/setupDatabase
+          curl -s http://localhost:8080/admin/initDefinitionData
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
 
       - name: Install Apidog CLI
         run: npm install -g apidog-cli
