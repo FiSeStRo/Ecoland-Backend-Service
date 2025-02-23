@@ -119,8 +119,8 @@ class AuthenticationHandler{
 
     // Environment variable names
     private const ENV_JWT_SECRET = 'JWT_SECRET';
-    private const ENV_JWT_ACCESS_TOKEN_DURATION = 'JWT_ACCESS_TOKEN_DURATION_IN_MINS';
-    private const ENV_JWT_REFRESH_TOKEN_DURATION = 'JWT_REFRESH_TOKEN_DURATION_IN_MINS';
+    private const ENV_JWT_ACCESS_TOKEN_DURATION = 'JWT_EXPIRATION_TIME_AT';
+    private const ENV_JWT_REFRESH_TOKEN_DURATION = 'JWT_EXPIRATION_TIME_RT';
 }
 
 ?>
