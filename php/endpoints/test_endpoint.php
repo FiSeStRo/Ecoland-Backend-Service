@@ -12,6 +12,9 @@ class TestEndpoint extends Endpoint{
         $this->registerCommand('isPostAlive', 'testIsPostAlive', CommandType::PostFormData);
         $this->registerCommand('isDatabaseAlive', 'testIsDatabaseAlive', CommandType::Get);
         $this->registerCommand('isUserLevelCheckAlive', 'testUserLevel', CommandType::PostJson);
+        $this->registerCommand('sameCommand', 'sameCommandPost', CommandType::PostJson);
+        $this->registerCommand('sameCommand', 'sameCommandGet', CommandType::Get);
+        $this->registerCommand('sameCommand', 'sameCommandPatch', CommandType::Patch);
     }
 
     // Dummy methods for get, post and authentication
@@ -38,6 +41,21 @@ class TestEndpoint extends Endpoint{
         }
 
         return new InternalStatus($requestStatus);
+    }
+
+    private function sameCommandPost() : InternalStatus {
+        echo "hello from same command with post";
+        return new InternalStatus(RequestStatus::Valid);
+    }
+
+    private function sameCommandGet() : InternalStatus{
+        echo "hello from same command with get";
+        return new InternalStatus(RequestStatus::Valid);
+    }
+
+    private function sameCommandPatch() : InternalStatus{
+        echo "hello from same command with patch";
+        return new InternalStatus(RequestStatus::Valid);
     }
 }
 
