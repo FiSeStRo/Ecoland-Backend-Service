@@ -11,7 +11,7 @@ class RequestHandler{
 
     private function parseRequest(){
         // Separate the path into smaller pieces.       
-        $pathSections = $this->extractPathSections($_GET['route']);       
+        $pathSections = $this->extractPathSections($_GET['route']);
 
         // Extract the endpoint, command and params for the command
         $requestEndpoint = $this->extractEndpointFromPath($pathSections);
@@ -21,7 +21,7 @@ class RequestHandler{
         $isEndpointValid = array_key_exists($requestEndpoint, self::ENDPOINT_LIST);
         $endpoint = null;
         $status = new InternalStatus(RequestStatus::Undefined);
-        if( !$isEndpointValid || self::ENDPOINT_LIST[$requestEndpoint] == ''){
+        if( !$isEndpointValid || self::ENDPOINT_LIST[$requestEndpoint] == ''){            
             $status = new InternalStatus(RequestStatus::UnknownEndpoint);            
         }
         else if( $requestCommand == '' ){
@@ -66,6 +66,9 @@ class RequestHandler{
     private function extractParams(array $pathSections) : array {
         $getParams = $_GET;
         $postParams = $_POST; 
+        $patchJsonContent = file_get_contents('php://input');
+        $patchParams = json_decode($patchJsonContent);
+
         if( isset($_SERVER['CONTENT_TYPE'])){
             if( $_SERVER['CONTENT_TYPE'] == CONTENT_TYPE_APPLICATION_JSON){
                 $postJsonString = file_get_contents('php://input');
@@ -96,7 +99,8 @@ class RequestHandler{
 
         $params = [
             'GET' => $getParams,
-            'POST' => $postParams,
+            'POST' => $postParams,     
+            'PATCH' => $patchParams,
         ];
         return $params;
     }

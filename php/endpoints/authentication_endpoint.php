@@ -11,7 +11,7 @@ class AuthenticationEndpoint extends Endpoint{
 
         $this->registerCommand('sign-up', 'signUp', CommandType::PostJson);
         $this->registerCommand('sign-in', 'signIn', CommandType::PostJson);
-        $this->registerCommand('refresh-token', 'refreshToken',CommandType::Get, UserLevel::User);
+        $this->registerCommand('refresh-token', 'refreshToken',CommandType::PostJson, UserLevel::User);
     }
 
     public function signUp() : InternalStatus{

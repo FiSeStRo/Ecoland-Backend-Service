@@ -30,6 +30,8 @@ enum RequestStatus : string{
     case MissingCommandInternalStatus = 'MissingCommandInternalStatus'; // command valid, but doesn't return InternalStatus
     case MissingRequiredParamsGet = 'MissingRequiredParamsGet';   
     case MissingRequiredParamsPost = 'MissingRequiredParamsPost'; 
+    case MissingRequiredParamsPatch = 'MissingRequiredParamsPatch';
+    case MissingRequiredParamsDelete = 'MissingRequiredParamsDelete';
     // Definition Data Error
     case UnknownBuildingDefinition = 'UnknownBuildingDefinition';
     case UnknownProductDefinition = 'UnknownProductDefinition';

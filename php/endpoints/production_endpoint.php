@@ -7,7 +7,7 @@ class ProductionEndpoint extends Endpoint{
         parent::__construct($command, $params, $authHandler);
 
         $this->registerCommand('start', 'startProduction', CommandType::PostJson, UserLevel::User);       
-        $this->registerCommand('cancel', 'cancelProduction', CommandType::GetWithId, UserLevel::User);
+        $this->registerCommand('cancel', 'cancelProduction', CommandType::Delete, UserLevel::User);
     }
 
     private function startProduction() : InternalStatus{
