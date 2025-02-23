@@ -53,7 +53,8 @@ jobs:
           for i in {1..30}; do
             docker ps
             if curl -s http://localhost:8080/; then
-
+              curl -s http://localhost:8080/admin/setupDatabase; then
+              curl -s http://localhost:8080/admin/initDefinitionData; then
               echo ""PhP Service is up and healthy""
               exit 0
             fi
