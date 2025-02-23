@@ -24,11 +24,11 @@ jobs:
       - name: Create php/.env file
         run: |
           mkdir -p php
-          echo "DB_USER=maria" > php/.env
-          echo "DB_PW=maria123" >> php/.env
-          echo "DB_HOST=mariadb-service" >> php/.env
-          echo "DB_PORT=3306" >> php/.env
-          echo "DB_NAME=mariadb" >> php/.env
+          echo "DB_USER=${{secrets.DB_USER}}" > php/.env
+          echo "DB_PW=${{secrets.DB_PW}}" >> php/.env
+          echo "DB_HOST=${{secrets.DB_HOST}}" >> php/.env
+          echo "DB_PORT=${{secrets.DB_PORT}}" >> php/.env
+          echo "DB_NAME=${{secrets.DB_NAME}}" >> php/.env
           echo "JWT_SECRET=${{secrets.JWT_SECRET}}" >> php/.env
           echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> php/.env
           echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> php/.env
@@ -36,11 +36,11 @@ jobs:
 
       - name: Start docker-compose service
         env:
-          DB_PW: maria123
-          DB_USER: maria
-          DB_HOST: mariadb-service
-          DB_NAME: mariadb
-          DB_PORT: 3306
+          DB_PW: ${{secrets.DB_PW}}
+          DB_USER: ${{secrets.DB_USER}}
+          DB_HOST: ${{secrets.DB_HOST}}
+          DB_NAME: ${{secrets.DB_NAME}}
+          DB_PORT: ${{secrets.DB_PORT}}
           JWT_EXPIRATION_TIME_AT: ${{secrets.JWT_EXPIRATION_TIME_AT}}
           JWT_EXPIRATION_TIME_RT: ${{secrets.JWT_EXPIRATION_TIME_RT}}
           JWT_SECRET: ${{secrets.JWT_SECRET}}
