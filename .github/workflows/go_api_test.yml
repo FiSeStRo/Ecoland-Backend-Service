@@ -46,7 +46,7 @@ jobs:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_PORT: ${{ secrets.DB_PORT }}
-        run: docker-compose --profile go up -d
+        run: docker compose --profile go up -d
 
       - name: Check container status
         run: docker ps
@@ -83,4 +83,4 @@ jobs:
           APIDOG_ACCESS_TOKEN: ${{ secrets.APIDOG_ACCESS_TOKEN }}
 
       - name: Shutdown Docker Compose services
-        run: docker-compose --profile go down
+        run: docker compose --profile go down
