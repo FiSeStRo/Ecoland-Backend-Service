@@ -3,7 +3,7 @@
 enum CommandType
 {
     case Get;
-    case GetWithParams;
+    case GetWithId;
     case PostFormData; // Content-Type multipart/form-data
     case PostJson; // Content-Type application/json
 }
@@ -54,7 +54,7 @@ class Endpoint
         }
 
         switch($currenctCommandType){
-            case CommandType::GetWithParams;
+            case CommandType::GetWithId;
                 return $this->m_Params['GET'];
             case CommandType::PostFormData;
             case CommandType::PostJson;
@@ -79,7 +79,7 @@ class Endpoint
         return $command[self::KEY_CMD_TYPE];
     }
 
-    protected function registerCommand(string $commandName, string $commandPath, CommandType $commandType = CommandType::Get, bool $isAuthenticationRequired = false): bool
+    protected function registerCommand(string $commandName, string $commandPath, CommandType $commandType = CommandType::Get, UserLevel $requiredUserLevel = UserLevel::Unregistered): bool
     {
         $commandName = trim($commandName);
         $commandName = strtolower($commandName);
@@ -97,10 +97,12 @@ class Endpoint
             return false;
         }
 
+        $userLevelValue = $requiredUserLevel->value;
+
         $this->m_RegisteredCommands[$commandName] = [
             self::KEY_CMD_PATH => $commandPath,
             self::KEY_CMD_TYPE => $commandType,
-            self::KEY_CMD_AUTH => $isAuthenticationRequired,
+            self::KEY_CMD_USER_LVL => $userLevelValue,
         ];
         return true;
     }
@@ -120,9 +122,12 @@ class Endpoint
         else{
             $command = $this->m_RegisteredCommands[$this->m_Command];
 
-            if ($command[self::KEY_CMD_AUTH] && !$this->isAuthenticationValid()) {
+            if ($command[self::KEY_CMD_USER_LVL] > UserLevel::Unregistered && !$this->isAuthenticationValid()) {
                 // - Is Authentication required?
                 $commandValidationStatus = RequestStatus::AuthenticationInvalid;
+            } else if($command[self::KEY_CMD_USER_LVL] > UserLevel::User) {
+                // - Does the user have the required user level to execute the command?
+
             } else if (!method_exists($this, $command[self::KEY_CMD_PATH])) {
                 // - Does the method for the command exist?
                 $commandValidationStatus = RequestStatus::MissingCommandImplementation;                
@@ -141,7 +146,7 @@ class Endpoint
         return $status;
     }
 
-    private function isCommandRegistered(string $commandName) : bool{
+    private function isCommandRegistered(string $commandName) : bool{        
         return array_key_exists($commandName, $this->m_RegisteredCommands);
     }
 
@@ -156,7 +161,7 @@ class Endpoint
 
     private function validateCommandType(CommandType $type): RequestStatus
     {
-        if ($type == CommandType::GetWithParams && empty($this->m_Params['GET'])) {
+        if ($type == CommandType::GetWithId && (empty($this->m_Params['GET']) || intval($this->m_Params['GET']['id']) == 0)) {
             return RequestStatus::MissingRequiredParamsGet;
         } else if ($type == CommandType::PostFormData && empty($this->m_Params['POST'])) {
             return RequestStatus::MissingRequiredParamsPost;
@@ -171,7 +176,7 @@ class Endpoint
 
     private const KEY_CMD_PATH = 0; // command path
     private const KEY_CMD_TYPE = 1; // type of command
-    private const KEY_CMD_AUTH = 2; // authentication required yes/no
+    private const KEY_CMD_USER_LVL = 2; // required user level to be able to execute command
 
     private string $m_Command = '';
     private array $m_Params = array();

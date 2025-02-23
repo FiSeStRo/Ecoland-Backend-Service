@@ -22,6 +22,7 @@ enum RequestStatus : string{
     case InvalidInput = 'InvalidInput';
     case InvalidInputEmail = 'InvalidInputEmail'; // Email address input is not of form email
     case AuthenticationInvalid = 'AuthenticationInvalid';
+    case CommandInsufficientUserLevel = 'CommandInsufficientUserLevel'; // User does not have required user level to be able to execute command
     case UnknownEndpoint = 'UnknownEndpoint';
     case MissingCommand = 'MissingCommand';
     case UnknownCommand = 'UnknownCommand';
@@ -60,5 +61,13 @@ enum RequestStatus : string{
     // Production Errors
     case ProductionInvalidTimestamp = 'ProductionInvalidTimestamp';
     case ProductionAlreadyCompleted = 'ProductionAlreadyCompleted';
+    case ProductionDoesNotExist = 'ProductionDoesNotExist';
+    case ProductionDoesNotBelongToUser = 'ProductionDoesNotBelongToUser';
+}
+
+enum UserLevel : int{
+    case Unregistered = -1;
+    case User = 0;
+    case Administrator = 50;
 }
 ?>

@@ -16,7 +16,7 @@ class RequestHandler{
         // Extract the endpoint, command and params for the command
         $requestEndpoint = $this->extractEndpointFromPath($pathSections);
         $requestCommand = $this->extractCommandFromPath($pathSections);
-        $requestParams = $this->extractParams();
+        $requestParams = $this->extractParams($pathSections);
 
         $isEndpointValid = array_key_exists($requestEndpoint, self::ENDPOINT_LIST);
         $endpoint = null;
@@ -63,7 +63,7 @@ class RequestHandler{
         return ($pathSections && $numPathSections >= 2) ? strtolower($pathSections[1]) : '';
     }
 
-    private function extractParams() : array {
+    private function extractParams(array $pathSections) : array {
         $getParams = $_GET;
         $postParams = $_POST; 
         if( isset($_SERVER['CONTENT_TYPE'])){
@@ -75,7 +75,12 @@ class RequestHandler{
                 }
             }
         }
-        
+
+        // Store potential GET id
+        if(isset($pathSections[2]) ){
+            $getParams['id'] = intval($pathSections[2]);
+        }
+
         // Remove route from params
         unset($getParams[self::ROUTE_PARAMS_KEY]);
 
