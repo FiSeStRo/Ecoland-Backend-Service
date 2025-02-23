@@ -53,8 +53,8 @@ jobs:
           for i in {1..30}; do
             docker ps
             if curl -s http://localhost:8080/; then
-              curl -s http://loclahost8080/admin/setupDatabase
-              curl -s http://localhost8080/admin/initDefinitionData
+              curl -s http://loclahost:8080/admin/setupDatabase
+              curl -s http://localhost:8080/admin/initDefinitionData
               echo ""PhP Service is up and healthy""
               exit 0
             fi
@@ -78,4 +78,4 @@ jobs:
           APIDOG_ACCESS_TOKEN: ${{ secrets.APIDOG_ACCESS_TOKEN }}
 
       - name: Shutdown Docker Compose services
-        run: docker-compose --profile php down
+        run: docker compose --profile php down
