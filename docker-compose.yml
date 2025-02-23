@@ -7,6 +7,9 @@ services:
       - ./php/.env
     ports:
     - "8080:80"
+    depends_on:
+    mariadb-service:
+      condition: service_started
   go-be-service:
     profiles:
       - go
