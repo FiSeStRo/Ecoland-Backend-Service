@@ -24,7 +24,7 @@ jobs:
       - name: Create php/.env file
         run: |
           mkdir -p php
-          echo "DB_USER=maria" > php/.env
+          echo "DB_USER=ruendelbrunft" > php/.env
           echo "DB_PW=maria123" >> php/.env
           echo "DB_HOST=mariadb-service" >> php/.env
           echo "DB_PORT=3306" >> php/.env
