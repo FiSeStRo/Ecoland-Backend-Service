@@ -9,7 +9,7 @@ services:
     - "8080:80"
     depends_on:
       mariadb-service:
-        condition: service_started
+        condition: service_healthy
   go-be-service:
     profiles:
       - go
@@ -34,6 +34,11 @@ services:
       MYSQL_PASSWORD: ${DB_PW}
     ports:
       - "3306:3306"
+    healthcheck:
+    test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
   redis:
     image: redis:latest
     ports:
