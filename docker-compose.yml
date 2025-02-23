@@ -1,9 +1,18 @@
 services:
   php-be-service:
+    profiles:
+    - php
     build: ./php
+    env_file:
+      - ./php/.env
     ports:
     - "8080:80"
+    depends_on:
+      mariadb-service:
+        condition: service_healthy
   go-be-service:
+    profiles:
+      - go
     build: ./go
     env_file:
     - ./go/.env
@@ -13,6 +22,7 @@ services:
     depends_on:
       mariadb-service:
         condition: service_started
+    
   mariadb-service:
     image: mariadb:latest
     container_name: mariadb
@@ -24,6 +34,13 @@ services:
       MYSQL_PASSWORD: ${DB_PW}
     ports:
       - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+      start_period: 1m
+      start_interval: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 3
   redis:
     image: redis:latest
     ports:
