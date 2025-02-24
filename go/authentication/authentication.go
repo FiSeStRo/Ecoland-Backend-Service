@@ -75,7 +75,7 @@ func ValidateAuthentication(req *http.Request) (EcoUserClaims, error) {
 	authHeader := req.Header.Get("Authorization")
 
 	if len(authHeader) < 7 && authHeader[:7] != "Bearer " {
-		log.Println("wrong header", authHeader)
+		log.Println("wrong header format")
 		return EcoUserClaims{}, fmt.Errorf("wrong authentication header")
 	}
 
