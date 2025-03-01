@@ -102,6 +102,8 @@ class Endpoint
             return false;
         }
 
+        // It's possible we have to compare vs numeric value from database.
+        // We have to use the assigned integer value for the enum for that.
         $userLevelValue = $requiredUserLevel->value;
 
         // Add new commands in two levels: 
@@ -138,13 +140,12 @@ class Endpoint
         }
         else{     
             $command = $this->m_RegisteredCommands[$this->m_RequestMethod][$this->m_Command];
-
-            if ($command[self::KEY_CMD_USER_LVL] > UserLevel::Unregistered && !$this->isAuthenticationValid()) {
+            if ($command[self::KEY_CMD_USER_LVL] > UserLevel::Unregistered->value && !$this->isAuthenticationValid()) {                
                 // - Is Authentication required?
                 $commandValidationStatus = RequestStatus::AuthenticationInvalid;
-            } else if($command[self::KEY_CMD_USER_LVL] > UserLevel::User) {
+            } else if($command[self::KEY_CMD_USER_LVL] > UserLevel::User->value) {
                 // - Does the user have the required user level to execute the command?
-
+                $commandValidationStatus = RequestStatus::CommandInsufficientUserLevel;
             } else if (!method_exists($this, $command[self::KEY_CMD_PATH])) {
                 // - Does the method for the command exist?
                 $commandValidationStatus = RequestStatus::MissingCommandImplementation;                
