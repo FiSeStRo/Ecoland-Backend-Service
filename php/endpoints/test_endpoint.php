@@ -11,7 +11,7 @@ class TestEndpoint extends Endpoint{
         $this->registerCommand('isGetAlive', 'testIsGetAlive', CommandType::GetWithId);
         $this->registerCommand('isPostAlive', 'testIsPostAlive', CommandType::PostFormData);
         $this->registerCommand('isDatabaseAlive', 'testIsDatabaseAlive', CommandType::Get);
-        $this->registerCommand('isUserLevelCheckAlive', 'testUserLevel', CommandType::PostJson);
+        $this->registerCommand('isUserLevelCheckAlive', 'testUserLevel', CommandType::Get, UserLevel::Administrator);
         $this->registerCommand('sameCommand', 'sameCommandPost', CommandType::PostJson);
         $this->registerCommand('sameCommand', 'sameCommandGet', CommandType::Get);
         $this->registerCommand('sameCommand', 'sameCommandPatch', CommandType::Patch);

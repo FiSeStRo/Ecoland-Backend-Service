@@ -158,6 +158,16 @@ class BuildingService
         return new InternalStatus(RequestStatus::UnknownBuildingDefinition);
     }
 
+    public function getBuildingDetails(int $buildingId) : InternalStatus
+    {
+        $sql = "SELECT * FROM " . DbTables::Buildings->value . " WHERE id = ?";
+        if( $this->m_Db->createStatement($sql)){
+            $this->m_Db->bindStatementParamInt($buildingId);
+            return $this->m_Db->executeStatement();            
+        }
+        return new InternalStatus(RequestStatus::DatabaseStmtCreationError);
+    }
+
     private function getDefinitionForBuilding(int $buildingId): BuildingDefinition
     {
         $defId = 0;

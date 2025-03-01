@@ -165,6 +165,19 @@ class ProductionService{
         return new InternalStatus(RequestStatus::DatabaseStmtCreationError);
     }
 
+    public function getAllProductionsForBuildingId(int $buildingId, bool $activeProductionsOnly = true) : InternalStatus{
+        $sql = "SELECT * FROM " . DbTables::ManufacturingOrders->value . " WHERE building_id = ?";
+        if( $activeProductionsOnly){
+            $sql .=  " AND is_completed = 0";
+        }
+        if($this->m_Db->createStatement($sql)){
+            $this->m_Db->bindStatementParamInt($buildingId);
+            $status = $this->m_Db->executeStatement(false, true);
+            return $status;
+        }
+        return new InternalStatus(RequestStatus::DatabaseStmtCreationError);
+    }
+
     public function getUserIdForProduction(int $productionId) : InternalStatus{
         $status = $this->getProductionOrder($productionId);
         if(!$status->isValidStatus()){

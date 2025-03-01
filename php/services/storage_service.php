@@ -84,7 +84,7 @@ class StorageService
         return $storageStatus;
     }
 
-    private function getStorageForBuilding(int $buildingId): InternalStatus{
+    public function getStorageForBuilding(int $buildingId): InternalStatus{
         $sql = "SELECT * FROM " . DbTables::Storage->value . " WHERE building_id = ?";
         if ($this->m_Db->createStatement($sql)) {
             $this->m_Db->bindStatementParamInt($buildingId);

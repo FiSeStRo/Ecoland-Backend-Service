@@ -5,6 +5,7 @@ enum ResponseType{
     case NewEntry; // respond with new id
     case Authentication; // respond with tokens
     case Error; // respond with error (error code and message token)
+    case ValidData; // respond with requested data
 }
 
 enum HttpResponseCode : int{
@@ -104,7 +105,6 @@ class Response{
             case RequestStatus::StorageInvalidAmount;
             case RequestStatus::StorageMissingCapacity;
             case RequestStatus::StorageMissingProducts;
-            default; 
                 $this->m_ResponseType = ResponseType::Error;
                 break;
             case RequestStatus::ValidAuthentification;
@@ -112,6 +112,9 @@ class Response{
                 break;
             case RequestStatus::ValidCreation;
                 $this->m_ResponseType = ResponseType::NewEntry;
+                break;
+            default; 
+                $this->m_ResponseType = ResponseType::ValidData;
                 break;
         }
     }
@@ -126,6 +129,9 @@ class Response{
                 break;
             case ResponseType::Error;
                 $this->handleResponseContentError($status);
+                break;
+            case ResponseType::ValidData;
+                $this->handleResponseContentValidData($status);
                 break;
             case ResponseType::None;
             default;
@@ -152,6 +158,10 @@ class Response{
             'code' => 0,
             'message_token' => $token,
         ];
+    }
+
+    private function handleResponseContentValidData(InternalStatus &$status){
+        $this->m_Content = $status->getData();
     }
 
     private RequestStatus $m_RequestStatus = RequestStatus::Uninitialized;
