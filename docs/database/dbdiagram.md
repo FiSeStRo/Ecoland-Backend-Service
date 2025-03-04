@@ -1,5 +1,6 @@
-// Use DBML to define your database structure
-// Docs: https://dbml.dbdiagram.io/docs
+# Database Structure from dbDiagram
+
+[docs](https://dbml.dbdiagram.io/docs)
 
 Project eco_land {
 database_type: 'MariaDb'

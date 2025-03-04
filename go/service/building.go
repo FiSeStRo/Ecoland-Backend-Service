@@ -36,6 +36,8 @@ type Def_Building struct {
 type ConstructRequest struct {
 	Def_id       int    `json:"def_id"`
 	Display_name string `json:"display_name"`
+	Lan          int    `json:"lan"`
+	Lat          int    `json:"lat"`
 }
 
 // ConstrucitonList service to retrive a list of possible constructions
@@ -124,8 +126,8 @@ func ConstructBuilding(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	stmt, err := db.Prepare(`INSERT INTO buildings (user_id, def_id, name, time_build)
-	VALUES (?, ?, ?, CURRENT_TIMESTAMP)`)
+	stmt, err := db.Prepare(`INSERT INTO buildings (user_id, def_id, name, lan, lat time_build)
+	VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`)
 	if err != nil {
 		log.Println("Error preparing data insert", err)
 		http.Error(w, "Error Preparing data insert", http.StatusInternalServerError)
@@ -133,7 +135,7 @@ func ConstructBuilding(w http.ResponseWriter, req *http.Request) {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(claims.UserId, constructReq.Def_id, constructReq.Display_name)
+	result, err := stmt.Exec(claims.UserId, constructReq.Def_id, constructReq.Display_name, constructReq.Lan, constructReq.Lat)
 	if err != nil {
 		http.Error(w, "Error constructing new building", http.StatusInternalServerError)
 		return
