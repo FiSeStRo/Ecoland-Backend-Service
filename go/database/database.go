@@ -48,6 +48,8 @@ func initaliseBuildingTables() {
 	user_id INT NOT NULL,
 	def_id INT NOT NULL,
 	name VARCHAR(255),
+	lan INT NOT NULL,
+	lat INT NOT NULL,
 	time_build TIMESTAMP NOT NULL
 	)`
 
