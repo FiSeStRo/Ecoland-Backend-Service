@@ -169,3 +169,32 @@ func initaliseRelationTables() {
 		log.Println("rel_buildng_def_production Table created or already in place")
 	}
 }
+
+func initaliseMapTables() {
+	creatCity := `CREATE TABLE IF NOT EXISTS city(
+	lon INT PRIMARY KEY.
+	lat INT PRIMARY KEY,
+	name VARCHAR(255),
+	pop INT NOT NULL,
+	)`
+
+	_, err := db.Exec(creatCity)
+	if err != nil {
+		log.Panic("error creating City table", err)
+	} else {
+		log.Println("city table created or already in place")
+	}
+
+	creatProductMap := `CREATE TABLE IF NOT EXISTS product_map(
+	lon INT PRIMARY KEY,
+	lat INT PRIMARY KEY,
+	pruduct_id INT PRIMARY KEY
+	)`
+	_, err = db.Exec(creatProductMap)
+
+	if err != nil {
+		log.Panic("error creating product_map table", err)
+	} else {
+		log.Println("product_map created or already in place")
+	}
+}
