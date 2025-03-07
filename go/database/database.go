@@ -26,6 +26,7 @@ func InitDatabaseTables() {
 	initaliseProductTables()
 	initaliseProductionTables()
 	initaliseRelationTables()
+	initaliseMapTables()
 }
 func initaliseBuildingTables() {
 
