@@ -36,7 +36,7 @@ jobs:
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> services/main_service/.env
           echo "JWT_SECRET=${{secrets.JWT_SECRET}}" >> services/main_service/.env
           echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> services/main_service/.env
-          echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> services/main+service/.env
+          echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> services/main_service/.env
           echo "JWT_ISSUER=${{secrets.JWT_ISSUER}}" >> services/main_service/.env
 
       - name: Start Docker Compose services
