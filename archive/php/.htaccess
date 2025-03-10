@@ -1,0 +1,6 @@
+# enable redirecting of every path back to index.php
+# required for Apache webserver
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]
