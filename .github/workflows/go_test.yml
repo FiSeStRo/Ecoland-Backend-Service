@@ -7,9 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  test-go:
+  setup:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
@@ -17,20 +16,40 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: "1.23"
+          cache: true
 
-      - name: Cache Go modules
-        uses: actions/cache@v3
+  test-go-pkg:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          go-version: "1.23"
+          cache: true
 
-      - name: Run Tests
+      - name: Test go_pkg
         run: |
-          cd go
-          go test -v
-          go test -v ./utils
-          go test -v ./service
-          go test -v ./database
-          go test -v ./authentication
+          cd go_pkg
+          go mod download
+          go test -v ./...
+
+  test-main-service:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.23"
+          cache: true
+
+      - name: Test main_service
+        run: |
+          cd services/main_service
+          go mod download
+          go test -v ./internal/...

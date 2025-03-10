@@ -1,4 +1,4 @@
-name: API Tests
+name: api_dog
 
 on:
   push:
@@ -15,7 +15,7 @@ on:
       - "go.sum"
 
 jobs:
-  test-api:
+  test-main-service-api-dog:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,16 +28,15 @@ jobs:
           sudo apt-get install -y docker-compose
       - name: Create go/.env file
         run: |
-          mkdir -p go
-          echo "DB_USER=${{ secrets.DB_USER }}" > go/.env
-          echo "DB_PW=${{ secrets.DB_PW }}" >> go/.env
-          echo "DB_HOST=${{secrets.DB_HOST}}" >> go/.env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> go/.env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> go/.env
-          echo "JWT_SECRET=${{secrets.JWT_SECRET}}" >> go/.env
-          echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> go/.env
-          echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> go/.env
-          echo "JWT_ISSUER=${{secrets.JWT_ISSUER}}" >> go/.env
+          echo "DB_USER=${{ secrets.DB_USER }}" > service/main_service/.env
+          echo "DB_PW=${{ secrets.DB_PW }}" >> service/main_service/.env
+          echo "DB_HOST=${{secrets.DB_HOST}}" >> service/main_service/.env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> service/main_service/.env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> service/main_service/.env
+          echo "JWT_SECRET=${{secrets.JWT_SECRET}}" >> service/main_service/.env
+          echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> service/main_service/.env
+          echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> service/main+service/.env
+          echo "JWT_ISSUER=${{secrets.JWT_ISSUER}}" >> service/main_service/.env
 
       - name: Start Docker Compose services
         env:

@@ -23,16 +23,16 @@ jobs:
 
       - name: Create php/.env file
         run: |
-          mkdir -p php
-          echo "DB_USER=${{secrets.DB_USER}}" > php/.env
-          echo "DB_PW=${{secrets.DB_PW}}" >> php/.env
-          echo "DB_HOST=${{secrets.DB_HOST}}" >> php/.env
-          echo "DB_PORT=${{secrets.DB_PORT}}" >> php/.env
-          echo "DB_NAME=${{secrets.DB_NAME}}" >> php/.env
-          echo "JWT_SECRET=${{secrets.JWT_SECRET}}" >> php/.env
-          echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> php/.env
-          echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> php/.env
-          echo "JWT_ISSUER=${{secrets.JWT_ISSUER}}" >> php/.env
+          mkdir -p archive/php
+          echo "DB_USER=${{secrets.DB_USER}}" > archive/php/.env
+          echo "DB_PW=${{secrets.DB_PW}}" >> archive/php/.env
+          echo "DB_HOST=${{secrets.DB_HOST}}" >> archive/php/.env
+          echo "DB_PORT=${{secrets.DB_PORT}}" >> archive/php/.env
+          echo "DB_NAME=${{secrets.DB_NAME}}" >> archive/php/.env
+          echo "JWT_SECRET=${{secrets.JWT_SECRET}}" >> archive/php/.env
+          echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> archive/php/.env
+          echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> archive/php/.env
+          echo "JWT_ISSUER=${{secrets.JWT_ISSUER}}" >> archive/php/.env
 
       - name: Start docker-compose service
         env:

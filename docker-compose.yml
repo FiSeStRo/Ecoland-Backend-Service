@@ -2,9 +2,9 @@ services:
   php-be-service:
     profiles:
     - php
-    build: ./php
+    build: ./archive/php
     env_file:
-      - ./php/.env
+      - ./archive/php/.env
     ports:
     - "8080:80"
     depends_on:
@@ -15,7 +15,7 @@ services:
       - go
     build: ./go
     env_file:
-    - ./go/.env
+    - ./services/main_service/.env
     ports:
       - "8081:8081"
     restart: always
