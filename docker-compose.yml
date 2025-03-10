@@ -13,7 +13,7 @@ services:
   go-be-service:
     profiles:
       - go
-    build: ./go
+    build: ./services/main_service
     env_file:
     - ./services/main_service/.env
     ports:
