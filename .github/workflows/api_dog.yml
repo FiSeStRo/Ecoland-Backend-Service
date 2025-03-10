@@ -29,15 +29,15 @@ jobs:
       - name: Create go/.env file
         run: |
           mkdir -p services/main_service
-          echo "DB_USER=${{ secrets.DB_USER }}" > service/main_service/.env
-          echo "DB_PW=${{ secrets.DB_PW }}" >> service/main_service/.env
-          echo "DB_HOST=${{secrets.DB_HOST}}" >> service/main_service/.env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> service/main_service/.env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> service/main_service/.env
-          echo "JWT_SECRET=${{secrets.JWT_SECRET}}" >> service/main_service/.env
-          echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> service/main_service/.env
-          echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> service/main+service/.env
-          echo "JWT_ISSUER=${{secrets.JWT_ISSUER}}" >> service/main_service/.env
+          echo "DB_USER=${{ secrets.DB_USER }}" > services/main_service/.env
+          echo "DB_PW=${{ secrets.DB_PW }}" >> services/main_service/.env
+          echo "DB_HOST=${{secrets.DB_HOST}}" >> services/main_service/.env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> services/main_service/.env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> services/main_service/.env
+          echo "JWT_SECRET=${{secrets.JWT_SECRET}}" >> services/main_service/.env
+          echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> services/main_service/.env
+          echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> services/main+service/.env
+          echo "JWT_ISSUER=${{secrets.JWT_ISSUER}}" >> services/main_service/.env
 
       - name: Start Docker Compose services
         env:
