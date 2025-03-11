@@ -3,6 +3,7 @@ module github.com/FiSeStRo/Ecoland-Backend-Service/services/main-service
 go 1.23.4
 
 require (
+	github.com/FiSeStRo/Ecoland-Backend-Service/go_pkg v0.0.0-20250311065651-0da6ea249a1b
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	golang.org/x/crypto v0.36.0
 )
