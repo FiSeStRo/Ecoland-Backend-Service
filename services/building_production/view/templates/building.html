@@ -3,7 +3,7 @@
   <h1>Buildings</h1>
   <p>Manage your construction projects and building operations.</p>
 
-  <table>
+  <table id="buildings-table">
     <thead>
       <tr>
         <th>ID</th>
@@ -11,7 +11,6 @@
         <th>Description</th>
         <th>Cost</th>
         <th>Build Time (min)</th>
-        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -22,12 +21,54 @@
         <td>{{.Description}}</td>
         <td>{{.ResourceCost}}</td>
         <td>{{.BuildTime}}</td>
-        <td>
-          <a href="/building/view?id={{.ID}}" class="button">View</a>
-        </td>
       </tr>
       {{end}}
     </tbody>
   </table>
+  <button class="btn" onclick="openModal('building')">+ Add</button>
+  <div id="modal-building" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('building')">&times;</span>
+      <h2>Create Building</h2>
+      <form id="building-form">
+        <div style="margin-bottom: 10px">
+          <label
+            >Name: <input type="text" id="building-name" name="name" required
+          /></label>
+        </div>
+        <div style="margin-bottom: 10px">
+          <label
+            >Description:
+            <input
+              type="text"
+              id="building-description"
+              name="description"
+              required
+          /></label>
+        </div>
+        <div style="margin-bottom: 10px">
+          <label
+            >Cost:
+            <input
+              type="number"
+              id="building-cost"
+              name="resourceCost"
+              required
+          /></label>
+        </div>
+        <div style="margin-bottom: 10px">
+          <label
+            >Build Time (min):
+            <input
+              type="number"
+              id="building-build-time"
+              name="buildTime"
+              required
+          /></label>
+        </div>
+        <button type="button" onclick="createBuilding()">Create</button>
+      </form>
+    </div>
+  </div>
 </div>
 {{end}}

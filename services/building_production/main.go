@@ -5,7 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/FiSeStRo/Ecoland-Backend-Service/go_pkg/database"
 	"github.com/FiSeStRo/Ecoland-Backend-Service/services/building_production/controller"
+	"github.com/FiSeStRo/Ecoland-Backend-Service/services/building_production/repository/mariadb"
+	"github.com/FiSeStRo/Ecoland-Backend-Service/services/building_production/service"
 	"github.com/FiSeStRo/Ecoland-Backend-Service/services/building_production/view"
 )
 
@@ -16,8 +19,20 @@ func main() {
 		log.Fatalf("Failed to initialize template renderer: %v", err)
 	}
 
+	dbConfig := database.NewConfig()
+
+	// Connect to database
+	db, err := database.Connect(dbConfig)
+	if err != nil {
+		log.Fatalf("Database connection failed: %v", err)
+	}
+	defer db.Close()
+
+	buildingRepo := mariadb.NewBuildingRepository(db)
+
+	buildingService := service.NewBuildingService(buildingRepo)
 	homeController := controller.NewHomeController(renderer)
-	buildingController := controller.NewBuildingController(renderer)
+	buildingController := controller.NewBuildingController(renderer, buildingService)
 	productController := controller.NewProductController(renderer)
 	productionController := controller.NewProductionController(renderer)
 
@@ -25,7 +40,7 @@ func main() {
 
 	// Register routes
 	mux.HandleFunc("/", homeController.Index)
-	mux.HandleFunc("/building", buildingController.Index)
+	buildingController.RegisterRoutes(mux)
 	mux.HandleFunc("/production", productionController.Index)
 	mux.HandleFunc("/product", productController.Index)
 
