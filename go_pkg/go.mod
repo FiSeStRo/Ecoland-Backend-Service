@@ -1,4 +1,4 @@
-module github.com/FiSeStRo/Ecoland-Backend-Service/pkg
+module github.com/FiSeStRo/Ecoland-Backend-Service/go_pkg
 
 go 1.23.4
 

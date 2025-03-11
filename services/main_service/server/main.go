@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/FiSeStRo/Ecoland-Backend-Service/pkg/database"
 	"github.com/FiSeStRo/Ecoland-Backend-Service/services/main-service/internal/config"
 	"github.com/FiSeStRo/Ecoland-Backend-Service/services/main-service/internal/controller"
 	"github.com/FiSeStRo/Ecoland-Backend-Service/services/main-service/internal/repository/mariadb"
