@@ -1,0 +1,35 @@
+{{define "content"}}
+<div class="card">
+  <h1>Products</h1>
+  <p>Manage your product inventory and specifications.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Value</th>
+        <th>Weight</th>
+        <th>Category</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Products}}
+      <tr>
+        <td>{{.ID}}</td>
+        <td>{{.Name}}</td>
+        <td>{{.Description}}</td>
+        <td>{{.Value}}</td>
+        <td>{{.Weight}}</td>
+        <td>{{.Category}}</td>
+        <td>
+          <a href="/product/view?id={{.ID}}" class="button">View</a>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{end}}

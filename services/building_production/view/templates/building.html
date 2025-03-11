@@ -1,0 +1,33 @@
+{{define "content"}}
+<div class="card">
+  <h1>Buildings</h1>
+  <p>Manage your construction projects and building operations.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Cost</th>
+        <th>Build Time (min)</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Buildings}}
+      <tr>
+        <td>{{.ID}}</td>
+        <td>{{.Name}}</td>
+        <td>{{.Description}}</td>
+        <td>{{.ResourceCost}}</td>
+        <td>{{.BuildTime}}</td>
+        <td>
+          <a href="/building/view?id={{.ID}}" class="button">View</a>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{end}}
