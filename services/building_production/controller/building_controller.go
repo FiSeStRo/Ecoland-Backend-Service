@@ -23,7 +23,7 @@ func NewBuildingController(renderer *view.TemplateRenderer) *BuildingController 
 func (c *BuildingController) Index(w http.ResponseWriter, r *http.Request) {
 	buildings := model.GetAllBuildings()
 
-	data := map[string]interface{}{
+	data := map[string]any{
 		"Title":     "Buildings",
 		"Buildings": buildings,
 	}

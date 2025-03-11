@@ -23,7 +23,7 @@ func NewProductionController(renderer *view.TemplateRenderer) *ProductionControl
 func (c *ProductionController) Index(w http.ResponseWriter, r *http.Request) {
 	productions := model.GetAllProductions()
 
-	data := map[string]interface{}{
+	data := map[string]any{
 		"Title":       "Production",
 		"Productions": productions,
 	}
