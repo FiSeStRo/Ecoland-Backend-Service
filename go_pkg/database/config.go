@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -19,14 +20,15 @@ func NewConfig() Config {
 	return Config{
 		Host:     getEnvWithDefault("DB_HOST", "localhost"),
 		Port:     getEnvWithDefault("DB_PORT", "3306"),
-		User:     getEnvWithDefault("DB_USER", "root"),
-		Password: getEnvWithDefault("DB_PW", ""),
-		DBName:   getEnvWithDefault("DB_NAME", "ecoland"),
+		User:     getEnvWithDefault("DB_USER", "maria"),
+		Password: getEnvWithDefault("DB_PW", "maria123"),
+		DBName:   getEnvWithDefault("DB_NAME", "mariadb"),
 	}
 }
 
 // DSN returns a MySQL connection string
 func (c *Config) DSN() string {
+	log.Println(c.User, c.Password, c.Host, c.Port, c.DBName)
 	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		c.User, c.Password, c.Host, c.Port, c.DBName)
 }

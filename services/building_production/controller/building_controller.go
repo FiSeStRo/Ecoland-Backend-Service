@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/FiSeStRo/Ecoland-Backend-Service/services/building_production/model"
@@ -26,14 +27,15 @@ func NewBuildingController(renderer *view.TemplateRenderer, buildingService serv
 func (c *BuildingController) RegisterRoutes(mux *http.ServeMux) {
 
 	mux.HandleFunc("/building", c.Index)
-	mux.HandleFunc("POST /api/building", c.AddBuilding)
+	mux.HandleFunc("POST /api/buildings", c.AddBuilding)
 }
 
 // Index handles the building page request
 func (c *BuildingController) Index(w http.ResponseWriter, req *http.Request) {
-	buildings, error := c.buildingService.GetAllBuildings()
-
-	if error != nil {
+	buildings, err := c.buildingService.GetAllBuildings()
+	log.Println(buildings)
+	if err != nil {
+		log.Printf("could not get buidlings: %v", err)
 		//TODO: add rendering of an error Page instead of the error message
 		http.Error(w, "could not get Buidlings", 500)
 		return
@@ -52,6 +54,7 @@ func (c *BuildingController) AddBuilding(w http.ResponseWriter, req *http.Reques
 	var buildigng model.Building
 
 	json.NewDecoder(req.Body).Decode(&buildigng)
+	log.Println("building", buildigng)
 	if err := c.buildingService.CreateBuilding(buildigng); err != nil {
 		http.Error(w, "building could not be added", 500)
 		return

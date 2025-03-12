@@ -8,9 +8,9 @@
       <tr>
         <th>ID</th>
         <th>Name</th>
-        <th>Description</th>
         <th>Cost</th>
         <th>Build Time (min)</th>
+        <th>Productions</th>
       </tr>
     </thead>
     <tbody>
@@ -18,9 +18,12 @@
       <tr>
         <td>{{.ID}}</td>
         <td>{{.Name}}</td>
-        <td>{{.Description}}</td>
         <td>{{.ResourceCost}}</td>
         <td>{{.BuildTime}}</td>
+        <td>
+          {{range $idx, $prod := .Productions}} {{if $idx}}, {{end}}{{$prod}}
+          {{else}} - {{end}}
+        </td>
       </tr>
       {{end}}
     </tbody>
@@ -38,16 +41,6 @@
         </div>
         <div style="margin-bottom: 10px">
           <label
-            >Description:
-            <input
-              type="text"
-              id="building-description"
-              name="description"
-              required
-          /></label>
-        </div>
-        <div style="margin-bottom: 10px">
-          <label
             >Cost:
             <input
               type="number"
@@ -58,11 +51,21 @@
         </div>
         <div style="margin-bottom: 10px">
           <label
-            >Build Time (min):
+            >Build Time:
             <input
               type="number"
               id="building-build-time"
               name="buildTime"
+              required
+          /></label>
+        </div>
+        <div style="margin-bottom: 10px">
+          <label
+            >Productions:
+            <input
+              type="string"
+              id="building-productions"
+              name="productions"
               required
           /></label>
         </div>

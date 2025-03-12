@@ -3,6 +3,9 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log"
+
+	"github.com/FiSeStRo/Ecoland-Backend-Service/go_pkg/config"
 )
 
 // Migration represents a database schema change
@@ -15,7 +18,7 @@ type Migration struct {
 func BuildingTableMigrations() []Migration {
 	const (
 		defBuildingsTableSQL = `CREATE TABLE IF NOT EXISTS def_buildings(
-            id INT PRIMARY KEY,
+            id INT PRIMARY KEY AUTO_INCREMENT,
             token_name VARCHAR(255),
             base_construction_cost DECIMAL(10,2),
             base_construction_time INT
@@ -264,5 +267,91 @@ func RunMigrations(db *sql.DB) error {
 		fmt.Printf("Migration completed: %s\n", migration.Name)
 	}
 
+	return nil
+}
+
+func MigrateDefinitonData(db *sql.DB) error {
+	if _, err := db.Exec("SET FOREIGN_KEY_CHECKS=0"); err != nil {
+		return fmt.Errorf("could not disable foreign key checks: %w", err)
+	}
+
+	if _, err := db.Exec("DROP TABLE IF EXISTS def_buildings"); err != nil {
+		return fmt.Errorf("could not drop def_buildings table: %w", err)
+	}
+
+	if _, err := db.Exec("DROP TABLE IF EXISTS def_production"); err != nil {
+		return fmt.Errorf("could not drop def_production table: %w", err)
+	}
+
+	if _, err := db.Exec("DROP TABLE IF EXISTS def_product"); err != nil {
+		return fmt.Errorf("could not drop def_product table: %w", err)
+	}
+
+	if _, err := db.Exec("DROP TABLE IF EXISTS def_rel_building_production"); err != nil {
+		return fmt.Errorf("could not drop def_rel_building_production: %w", err)
+	}
+	if _, err := db.Exec("SET FOREIGN_KEY_CHECKS=1"); err != nil {
+		return fmt.Errorf("could not enable foreign key checks: %w", err)
+	}
+
+	if err := RunMigrations(db); err != nil {
+		return fmt.Errorf("Migration failed: %w", err)
+	}
+
+	log.Println("Start DefData Migration ...")
+	type DefBuilding struct {
+		ID          int    `json:"id"`
+		Name        string `json:"token_name"`
+		Cost        int    `json:"base_construction_cost"`
+		BuildTime   int    `json:"base_construction_time"`
+		Productions []int  `json:"productions"`
+	}
+	defBuildings, err := config.LoadJsonDataFromFileStorage[[]DefBuilding]("def_buildings.json")
+	if err != nil {
+		return fmt.Errorf("couldn't load json from file: %w", err)
+	}
+
+	for _, building := range defBuildings {
+		tx, err := db.Begin()
+		if err != nil {
+			return fmt.Errorf("failed to begin transaction: %w", err)
+		}
+
+		defer func() {
+			if err != nil {
+				tx.Rollback()
+			}
+		}()
+		buildingQuery := `INSERT INTO def_buildings(token_name, base_construction_cost, base_construction_time) VALUES ( ?, ?, ?)`
+		buildingResult, err := tx.Exec(buildingQuery, building.Name, building.Cost, building.BuildTime)
+		if err != nil {
+			return fmt.Errorf("failed to insert building: %w", err)
+		}
+		buildingID, err := buildingResult.LastInsertId()
+		if err != nil {
+			return fmt.Errorf("failed to get last insert ID: %w", err)
+		}
+
+		if len(building.Productions) > 0 {
+			relationStmt, err := tx.Prepare(`INSERT INTO def_rel_building_production(building_id, production_id) VALUES (?, ?)`)
+			if err != nil {
+				return fmt.Errorf("failed to prepare relation statement: %w", err)
+			}
+			defer relationStmt.Close()
+
+			for _, productionID := range building.Productions {
+				_, err = relationStmt.Exec(buildingID, productionID)
+				if err != nil {
+					return fmt.Errorf("failed to insert production relation (building_id=%d, production_id=%d): %w",
+						buildingID, productionID, err)
+				}
+			}
+		}
+
+		if err = tx.Commit(); err != nil {
+			return fmt.Errorf("failed to commit transaction: %w", err)
+		}
+	}
+	log.Println("Migrate Definiton Data Successful")
 	return nil
 }

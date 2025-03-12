@@ -3,6 +3,7 @@ package mariadb
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	"github.com/FiSeStRo/Ecoland-Backend-Service/services/building_production/model"
 )
@@ -33,7 +34,6 @@ func (r *buildingRepository) GetDefBuildings() ([]model.Building, error) {
 	}
 	defer rows.Close()
 
-	buildingsMap := make(map[int]*model.Building)
 	var result []model.Building
 
 	for rows.Next() {
@@ -42,19 +42,17 @@ func (r *buildingRepository) GetDefBuildings() ([]model.Building, error) {
 			return nil, fmt.Errorf("scan failed: %w", err)
 		}
 
-		building.Production = make([]int, 0)
 		result = append(result, building)
-		buildingsMap[building.ID] = &result[len(result)-1]
+
 	}
 
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("rows iteration failed: %w", err)
 	}
-
 	productionsQuery := `
-        SELECT building_id, production_id 
-        FROM rel_building_def_production 
-        WHERE building_id IN (SELECT id FROM def_buildings)`
+	SELECT building_id, production_id 
+	FROM def_rel_building_production
+	WHERE building_id IN (SELECT id FROM def_buildings)`
 
 	prodRows, err := r.db.Query(productionsQuery)
 	if err != nil {
@@ -62,18 +60,26 @@ func (r *buildingRepository) GetDefBuildings() ([]model.Building, error) {
 	}
 	defer prodRows.Close()
 
+	productionsByBuilding := make(map[int][]int)
+
 	for prodRows.Next() {
 		var buildingID, productionID int
 		if err := prodRows.Scan(&buildingID, &productionID); err != nil {
 			return nil, fmt.Errorf("production scan failed: %w", err)
 		}
-		if building, exists := buildingsMap[buildingID]; exists {
-			building.Production = append(building.Production, productionID)
-		}
+
+		productionsByBuilding[buildingID] = append(productionsByBuilding[buildingID], productionID)
 	}
 
 	if err := prodRows.Err(); err != nil {
 		return nil, fmt.Errorf("production rows iteration failed: %w", err)
+	}
+
+	for i := range result {
+		buildingID := result[i].ID
+		if prods, exists := productionsByBuilding[buildingID]; exists {
+			result[i].Productions = prods
+		}
 	}
 
 	return result, nil
@@ -90,7 +96,7 @@ func (r *buildingRepository) CreateDefBuilding(building model.Building) error {
 			tx.Rollback()
 		}
 	}()
-	buildingQuery := `INSERT INTO def_buildings(token_name, base_construction_cost, base_construction_time) VALUES (?, ?, ?)`
+	buildingQuery := `INSERT INTO def_buildings( token_name, base_construction_cost, base_construction_time) VALUES ( ?, ?, ?)`
 	buildingResult, err := tx.Exec(buildingQuery, building.Name, building.ResourceCost, building.BuildTime)
 	if err != nil {
 		return fmt.Errorf("failed to insert building: %w", err)
@@ -100,14 +106,15 @@ func (r *buildingRepository) CreateDefBuilding(building model.Building) error {
 		return fmt.Errorf("failed to get last insert ID: %w", err)
 	}
 
-	if len(building.Production) > 0 {
-		relationStmt, err := tx.Prepare(`INSERT INTO rel_building_def_production(building_id, production_id) VALUES (?, ?)`)
+	log.Println("buildgi + productions", buildingID, building.Productions)
+	if len(building.Productions) > 0 {
+		relationStmt, err := tx.Prepare(`INSERT INTO def_rel_building_production(building_id, production_id) VALUES (?, ?)`)
 		if err != nil {
 			return fmt.Errorf("failed to prepare relation statement: %w", err)
 		}
 		defer relationStmt.Close()
 
-		for _, productionID := range building.Production {
+		for _, productionID := range building.Productions {
 			_, err = relationStmt.Exec(buildingID, productionID)
 			if err != nil {
 				return fmt.Errorf("failed to insert production relation (building_id=%d, production_id=%d): %w",

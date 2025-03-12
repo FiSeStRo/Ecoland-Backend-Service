@@ -240,17 +240,31 @@
       }
 
       function createBuilding() {
+        console.log("creating building");
+        console.log(document.getElementById("building-productions").value);
+        console.log(
+          document.getElementById("building-productions").value.split(",")
+        );
+        console.log(
+          document
+            .getElementById("building-productions")
+            .value.split(",")
+            .map((id) => parseInt(id))
+        );
         const buildingData = {
           name: document.getElementById("building-name").value,
-          description: document.getElementById("building-description").value,
           resourceCost: parseFloat(
             document.getElementById("building-cost").value
           ),
           buildTime: parseInt(
             document.getElementById("building-build-time").value
           ),
+          productions: document
+            .getElementById("building-productions")
+            .value.split(",")
+            .map((id) => parseInt(id)),
         };
-
+        console.log(buildingData);
         fetch("/api/buildings", {
           method: "POST",
           headers: {
@@ -259,12 +273,14 @@
           body: JSON.stringify(buildingData),
         })
           .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
+            console.log(response.status);
+            if (response.status !== 201) {
+              throw new Error(
+                `Network response was not ok with status: ${response.status}`
+              );
             }
-            return response.json();
           })
-          .then((data) => {
+          .then(() => {
             closeModal("building");
             window.location.reload();
           })

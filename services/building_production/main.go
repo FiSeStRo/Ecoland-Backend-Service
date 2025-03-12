@@ -21,13 +21,16 @@ func main() {
 
 	dbConfig := database.NewConfig()
 
+	log.Println(dbConfig)
 	// Connect to database
 	db, err := database.Connect(dbConfig)
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}
 	defer db.Close()
-
+	if err = database.MigrateDefinitonData(db); err != nil {
+		log.Println("could not migrate Data:", err)
+	}
 	buildingRepo := mariadb.NewBuildingRepository(db)
 
 	buildingService := service.NewBuildingService(buildingRepo)
