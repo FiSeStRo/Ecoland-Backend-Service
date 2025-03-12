@@ -51,6 +51,6 @@ func main() {
 
 	const port = 8082
 
-	log.Println("Starting buildigng and production server on:", port)
+	log.Println("Starting building and production server on:", port)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(port), mux))
 }

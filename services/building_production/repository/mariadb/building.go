@@ -3,7 +3,6 @@ package mariadb
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
 	"github.com/FiSeStRo/Ecoland-Backend-Service/services/building_production/model"
 )
@@ -106,7 +105,6 @@ func (r *buildingRepository) CreateDefBuilding(building model.Building) error {
 		return fmt.Errorf("failed to get last insert ID: %w", err)
 	}
 
-	log.Println("buildgi + productions", buildingID, building.Productions)
 	if len(building.Productions) > 0 {
 		relationStmt, err := tx.Prepare(`INSERT INTO def_rel_building_production(building_id, production_id) VALUES (?, ?)`)
 		if err != nil {
