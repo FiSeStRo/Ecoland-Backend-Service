@@ -21,7 +21,6 @@ func main() {
 
 	dbConfig := database.NewConfig()
 
-	log.Println(dbConfig)
 	// Connect to database
 	db, err := database.Connect(dbConfig)
 	if err != nil {

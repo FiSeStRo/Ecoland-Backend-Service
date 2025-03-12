@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"os"
 )
 
@@ -28,7 +27,6 @@ func NewConfig() Config {
 
 // DSN returns a MySQL connection string
 func (c *Config) DSN() string {
-	log.Println(c.User, c.Password, c.Host, c.Port, c.DBName)
 	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		c.User, c.Password, c.Host, c.Port, c.DBName)
 }
