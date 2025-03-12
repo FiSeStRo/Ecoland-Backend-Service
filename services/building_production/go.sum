@@ -1,0 +1,6 @@
+filippo.io/edwards25519 v1.1.0 h1:FNf4tywRC1HmFuKW5xopWpigGjJKiJSV0Cqo0cJWDaA=
+filippo.io/edwards25519 v1.1.0/go.mod h1:BxyFTGdWcka3PhytdK4V28tE5sGfRvvvRV7EaN4VDT4=
+github.com/FiSeStRo/Ecoland-Backend-Service/go_pkg v0.0.0-20250311065849-ed1a1cc6f541 h1:qSR3of5ODGUbM4E6bDHcU/BPuzxpBb5RQsE3Kfvz5a4=
+github.com/FiSeStRo/Ecoland-Backend-Service/go_pkg v0.0.0-20250311065849-ed1a1cc6f541/go.mod h1:sbOQk+9pcFUAKNadqj8IU3vgDPgEIslhI9VbqSpXNkk=
+github.com/go-sql-driver/mysql v1.9.0 h1:Y0zIbQXhQKmQgTp44Y1dp3wTXcn804QoTptLZT1vtvo=
+github.com/go-sql-driver/mysql v1.9.0/go.mod h1:pDetrLJeA3oMujJuvXc8RJoasr589B6A9fwzD3QMrqw=

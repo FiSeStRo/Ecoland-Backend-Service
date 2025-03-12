@@ -1,0 +1,37 @@
+{{define "content"}}
+<div class="card">
+  <h1>Production Processes</h1>
+  <p>Manage your production lines and operations.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Input</th>
+        <th>Output</th>
+        <th>Duration (min)</th>
+        <th>Cost</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Productions}}
+      <tr>
+        <td>{{.ID}}</td>
+        <td>{{.Name}}</td>
+        <td>{{.Description}}</td>
+        <td>{{.InputType}}</td>
+        <td>{{.OutputType}}</td>
+        <td>{{.Duration}}</td>
+        <td>{{.Cost}}</td>
+        <td>
+          <a href="/production/view?id={{.ID}}" class="button">View</a>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{end}}
