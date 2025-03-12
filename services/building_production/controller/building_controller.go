@@ -35,9 +35,9 @@ func (c *BuildingController) Index(w http.ResponseWriter, req *http.Request) {
 	buildings, err := c.buildingService.GetAllBuildings()
 	log.Println(buildings)
 	if err != nil {
-		log.Printf("could not get buidlings: %v", err)
+		log.Printf("could not get buildings: %v", err)
 		//TODO: add rendering of an error Page instead of the error message
-		http.Error(w, "could not get Buidlings", 500)
+		http.Error(w, "could not get Buildings", 500)
 		return
 	}
 
