@@ -86,7 +86,7 @@ func UserTableMigrations() []Migration {
 // ProductTableMigrations returns migrations for product-related tables
 func ProductTableMigrations() []Migration {
 	const defProductTableSQL = `CREATE TABLE IF NOT EXISTS def_product(
-        id INT PRIMARY KEY,
+        id INT PRIMARY KEY AUTO_INCREMENT,
         base_value INT NOT NULL,
         token_name VARCHAR(255)
     )`
@@ -104,7 +104,7 @@ func ProductTableMigrations() []Migration {
 // ProductionTableMigrations returns migrations for production-related tables
 func ProductionTableMigrations() []Migration {
 	const defProductionTableSQL = `CREATE TABLE IF NOT EXISTS def_production(
-        id INT PRIMARY KEY,
+        id INT PRIMARY KEY AUTO_INCREMENT,
         token_name VARCHAR(255),
         cost DECIMAL(10,2),
         base_duration INT
@@ -115,8 +115,23 @@ func ProductionTableMigrations() []Migration {
 		SQL:  defProductionTableSQL,
 	}
 
+	const defRelProductionProductSQL = `CREATE TABLE IF NOT EXISTS def_rel_production_product(
+        production_id INT NOT NULL,
+        product_id INT NOT NULL,
+        is_input BOOLEAN NOT NULL COMMENT 'True if consumed, False if produced',
+        amount INT NOT NULL,
+        PRIMARY KEY (production_id, product_id, is_input),
+        FOREIGN KEY (production_id) REFERENCES def_production(id),
+        FOREIGN KEY (product_id) REFERENCES def_product(id)
+    )`
+
+	var DefRelProductionProductTable = Migration{
+		Name: "Creat def_rel_production_product table",
+		SQL:  defRelProductionProductSQL,
+	}
 	return []Migration{
 		DefProductionTable,
+		DefRelProductionProductTable,
 	}
 }
 
@@ -298,7 +313,9 @@ func MigrateDefinitonData(db *sql.DB) error {
 	}
 
 	log.Println("Start DefData Migration ...")
-
+	if _, err := db.Exec("SET FOREIGN_KEY_CHECKS=0"); err != nil {
+		return fmt.Errorf("could not disable foreign key checks: %w", err)
+	}
 	defBuildings, err := config.LoadJsonDataFromFileStorage[[]DefBuilding]("def_buildings.json")
 	if err != nil {
 		return fmt.Errorf("couldn't load json from file: %w", err)
@@ -346,6 +363,7 @@ func MigrateDefinitonData(db *sql.DB) error {
 		}
 	}
 
+	//TODO: add json
 	type DefProductionConfig struct {
 		DefProduction
 		Products []struct {
@@ -373,10 +391,10 @@ func MigrateDefinitonData(db *sql.DB) error {
 			}
 		}()
 
-		productionQuery := `INSERT INTO def_production( token_name, cost, base_duration) VALUES(?, ?, ?, ?)`
+		productionQuery := `INSERT INTO def_production( token_name, cost, base_duration) VALUES(?, ?, ?)`
 		result, err := tx.Exec(productionQuery, production.Name, production.Cost, production.Duration)
 		if err != nil {
-			return fmt.Errorf("failed to insert production")
+			return fmt.Errorf("failed to insert production: %w", err)
 		}
 
 		productionID, err := result.LastInsertId()
@@ -384,7 +402,7 @@ func MigrateDefinitonData(db *sql.DB) error {
 			return fmt.Errorf("failed to get last inserted ID: %w", err)
 		}
 		if len(production.Products) > 0 {
-			productQuery := `INSERT INTO def_rel_production_product(production_id, product_id, is_input, amount)`
+			productQuery := `INSERT INTO def_rel_production_product(production_id, product_id, is_input, amount) VALUE(?, ?, ?, ?)`
 			stmt, err := tx.Prepare(productQuery)
 			if err != nil {
 				return fmt.Errorf("failed to prepare relation statement: %w", err)
@@ -400,6 +418,9 @@ func MigrateDefinitonData(db *sql.DB) error {
 		if err := tx.Commit(); err != nil {
 			return fmt.Errorf("failed to commit transaction: %w", err)
 		}
+	}
+	if _, err := db.Exec("SET FOREIGN_KEY_CHECKS=1"); err != nil {
+		return fmt.Errorf("could not enable foreign key checks: %w", err)
 	}
 	log.Println("Migrate Definiton Data Successful")
 	return nil

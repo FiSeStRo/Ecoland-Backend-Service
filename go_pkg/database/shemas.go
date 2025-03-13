@@ -9,10 +9,10 @@ type DefBuilding struct {
 }
 
 type DefProduction struct {
-	ID       int    `json:"id"`
-	Name     string `json:"token_name"`
-	Cost     int    `json:"cost"`
-	Duration int    `json:"base_duration"`
+	ID       int     `json:"id"`
+	Name     string  `json:"token_name"`
+	Cost     float64 `json:"cost"`
+	Duration int     `json:"base_duration"`
 }
 
 type DefRelProductionProduct struct {
