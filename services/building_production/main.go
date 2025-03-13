@@ -46,7 +46,7 @@ func main() {
 	// Register routes
 	mux.HandleFunc("/", homeController.Index)
 	buildingController.RegisterRoutes(mux)
-	mux.HandleFunc("/production", productionController.Index)
+	productionController.RegisterRoutes(mux)
 	mux.HandleFunc("/product", productController.Index)
 
 	fs := http.FileServer(http.Dir("static"))

@@ -304,6 +304,9 @@ func MigrateDefinitonData(db *sql.DB) error {
 	if _, err := db.Exec("DROP TABLE IF EXISTS def_rel_building_production"); err != nil {
 		return fmt.Errorf("could not drop def_rel_building_production: %w", err)
 	}
+	if _, err := db.Exec("DROP TABLE IF EXISTS def_rel_production_product"); err != nil {
+		return fmt.Errorf("could not drop def_rel_production_product: %w", err)
+	}
 	if _, err := db.Exec("SET FOREIGN_KEY_CHECKS=1"); err != nil {
 		return fmt.Errorf("could not enable foreign key checks: %w", err)
 	}
@@ -363,13 +366,12 @@ func MigrateDefinitonData(db *sql.DB) error {
 		}
 	}
 
-	//TODO: add json
 	type DefProductionConfig struct {
 		DefProduction
 		Products []struct {
-			ProductID int
-			IsInput   bool
-			amount    int
+			ProductID int  `json:"product_id"`
+			IsInput   bool `json:"is_input"`
+			Amount    int  `json:"amount"`
 		}
 	}
 
@@ -409,7 +411,7 @@ func MigrateDefinitonData(db *sql.DB) error {
 			}
 			defer stmt.Close()
 			for _, product := range production.Products {
-				if _, err := stmt.Exec(productionID, product.ProductID, product.IsInput, product.amount); err != nil {
+				if _, err := stmt.Exec(productionID, product.ProductID, product.IsInput, product.Amount); err != nil {
 					return fmt.Errorf("failed to insert products production relation: %w", err)
 				}
 			}

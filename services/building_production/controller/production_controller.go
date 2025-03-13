@@ -23,6 +23,12 @@ func NewProductionController(renderer *view.TemplateRenderer, productionService 
 	}
 }
 
+// RegisterRoutes registers ProductionController routes
+func (c *ProductionController) RegisterRoutes(mux *http.ServeMux) {
+	mux.HandleFunc("/production", c.Index)
+	mux.HandleFunc("/api/production", c.AddProduction)
+}
+
 // Index handles the production page request
 func (c *ProductionController) Index(w http.ResponseWriter, req *http.Request) {
 	productions, err := c.productionService.GetProductions()
@@ -67,6 +73,7 @@ func (c *ProductionController) Index(w http.ResponseWriter, req *http.Request) {
 	c.renderer.Render(w, "production.html", data)
 }
 
+// Add Productions handles the request to add a new production
 func (c *ProductionController) AddProduction(w http.ResponseWriter, req *http.Request) {
-
+	//TODO: implement Production flow
 }
