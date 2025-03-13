@@ -26,7 +26,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y docker-compose
-      - name: Create go/.env file
+
+      - name: Create main_service/.env file
         run: |
           mkdir -p services/main_service
           echo "DB_USER=${{ secrets.DB_USER }}" > services/main_service/.env
@@ -38,6 +39,19 @@ jobs:
           echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> services/main_service/.env
           echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> services/main_service/.env
           echo "JWT_ISSUER=${{secrets.JWT_ISSUER}}" >> services/main_service/.env
+
+      - name: Create building_product service env file
+        run: |
+          mkdir -p services/building_product
+          echo "DB_USER=${{ secrets.DB_USER }}" > services/building_product/.env
+          echo "DB_PW=${{ secrets.DB_PW }}" >> services/building_product/.env
+          echo "DB_HOST=${{secrets.DB_HOST}}" >> services/building_product/.env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> services/building_product/.env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> services/building_product/.env
+          echo "JWT_SECRET=${{secrets.JWT_SECRET}}" >> services/building_product/.env
+          echo "JWT_EXPIRATION_TIME_AT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> services/building_product/.env
+          echo "JWT_EXPIRATION_TIME_RT=${{secrets.JWT_EXPIRATION_TIME_AT}}" >> services/building_product/.env
+          echo "JWT_ISSUER=${{secrets.JWT_ISSUER}}" >> services/building_product/.env
 
       - name: Start Docker Compose services
         env:
