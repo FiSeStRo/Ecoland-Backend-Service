@@ -248,7 +248,6 @@ func ProductionEntryTableMigrations() []Migration {
 
 // RunMigrations executes all database migrations
 func RunMigrations(db *sql.DB) error {
-	// Collect all migrations
 	migrations := []Migration{}
 	migrations = append(migrations, BuildingTableMigrations()...)
 	migrations = append(migrations, UserTableMigrations()...)
@@ -259,7 +258,6 @@ func RunMigrations(db *sql.DB) error {
 	migrations = append(migrations, StorageTableMigrations()...)
 	migrations = append(migrations, ProductionEntryTableMigrations()...)
 
-	// Run each migration
 	for _, migration := range migrations {
 		if _, err := db.Exec(migration.SQL); err != nil {
 			return fmt.Errorf("migration '%s' failed: %w", migration.Name, err)
@@ -270,6 +268,7 @@ func RunMigrations(db *sql.DB) error {
 	return nil
 }
 
+// MigrateDefinitonData migrates and sets up the definition tables in the database
 func MigrateDefinitonData(db *sql.DB) error {
 	if _, err := db.Exec("SET FOREIGN_KEY_CHECKS=0"); err != nil {
 		return fmt.Errorf("could not disable foreign key checks: %w", err)
@@ -299,13 +298,7 @@ func MigrateDefinitonData(db *sql.DB) error {
 	}
 
 	log.Println("Start DefData Migration ...")
-	type DefBuilding struct {
-		ID          int    `json:"id"`
-		Name        string `json:"token_name"`
-		Cost        int    `json:"base_construction_cost"`
-		BuildTime   int    `json:"base_construction_time"`
-		Productions []int  `json:"productions"`
-	}
+
 	defBuildings, err := config.LoadJsonDataFromFileStorage[[]DefBuilding]("def_buildings.json")
 	if err != nil {
 		return fmt.Errorf("couldn't load json from file: %w", err)
@@ -349,6 +342,62 @@ func MigrateDefinitonData(db *sql.DB) error {
 		}
 
 		if err = tx.Commit(); err != nil {
+			return fmt.Errorf("failed to commit transaction: %w", err)
+		}
+	}
+
+	type DefProductionConfig struct {
+		DefProduction
+		Products []struct {
+			ProductID int
+			IsInput   bool
+			amount    int
+		}
+	}
+
+	defProductions, err := config.LoadJsonDataFromFileStorage[[]DefProductionConfig]("def_production.json")
+
+	if err != nil {
+		return fmt.Errorf("could not load json from file %w", err)
+	}
+
+	for _, production := range defProductions {
+		tx, err := db.Begin()
+		if err != nil {
+			return fmt.Errorf("faield to begin transaction: %w", err)
+		}
+
+		defer func() {
+			if err != nil {
+				tx.Rollback()
+			}
+		}()
+
+		productionQuery := `INSERT INTO def_production( token_name, cost, base_duration) VALUES(?, ?, ?, ?)`
+		result, err := tx.Exec(productionQuery, production.Name, production.Cost, production.Duration)
+		if err != nil {
+			return fmt.Errorf("failed to insert production")
+		}
+
+		productionID, err := result.LastInsertId()
+		if err != nil {
+			return fmt.Errorf("failed to get last inserted ID: %w", err)
+		}
+		if len(production.Products) > 0 {
+			productQuery := `INSERT INTO def_rel_production_product(production_id, product_id, is_input, amount)`
+			stmt, err := tx.Prepare(productQuery)
+			if err != nil {
+				return fmt.Errorf("failed to prepare relation statement: %w", err)
+			}
+			defer stmt.Close()
+			for _, product := range production.Products {
+				if _, err := stmt.Exec(productionID, product.ProductID, product.IsInput, product.amount); err != nil {
+					return fmt.Errorf("failed to insert products production relation: %w", err)
+				}
+			}
+		}
+
+		if err := tx.Commit(); err != nil {
 			return fmt.Errorf("failed to commit transaction: %w", err)
 		}
 	}
