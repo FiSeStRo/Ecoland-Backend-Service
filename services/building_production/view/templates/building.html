@@ -20,6 +20,7 @@
         <td>{{.Name}}</td>
         <td>{{.ResourceCost}}</td>
         <td>{{.BuildTime}}</td>
+        //TODO: Add input output text
         <td>
           {{range $idx, $prod := .Productions}} {{if $idx}}, {{end}}{{$prod}}
           {{else}} - {{end}}

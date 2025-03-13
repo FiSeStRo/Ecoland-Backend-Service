@@ -31,12 +31,15 @@ func main() {
 		log.Println("could not migrate Data:", err)
 	}
 	buildingRepo := mariadb.NewBuildingRepository(db)
+	productionRepo := mariadb.NewProductionRepository(db)
 
 	buildingService := service.NewBuildingService(buildingRepo)
+	productionService := service.NewProductionService(productionRepo)
+
 	homeController := controller.NewHomeController(renderer)
 	buildingController := controller.NewBuildingController(renderer, buildingService)
+	productionController := controller.NewProductionController(renderer, productionService)
 	productController := controller.NewProductController(renderer)
-	productionController := controller.NewProductionController(renderer)
 
 	mux := http.NewServeMux()
 
