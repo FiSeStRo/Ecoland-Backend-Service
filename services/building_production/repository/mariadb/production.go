@@ -28,7 +28,7 @@ func (r *productionRepository) GetDefProductions() ([]model.Production, error) {
 
 	rows, err := r.db.Query(productionsQuery)
 	if err != nil {
-		return nil, fmt.Errorf("could not query def producion rows: %w", err)
+		return nil, fmt.Errorf("could not query def production rows: %w", err)
 	}
 	defer rows.Close()
 
@@ -117,7 +117,7 @@ func (r *productionRepository) CreateDefProduction(production model.Production) 
 
 	relationStmt, err := tx.Prepare(`INSERT INTO def_rel_production_product(production_id, product_id, is_input, amount) VALUES(?, ?, ?, ?)`)
 	if err != nil {
-		return fmt.Errorf("could not prepare production prodcut relation: %w", err)
+		return fmt.Errorf("could not prepare production product relation: %w", err)
 	}
 	defer relationStmt.Close()
 	if len(production.InputType) > 0 {

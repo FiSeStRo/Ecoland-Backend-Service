@@ -126,7 +126,7 @@ func ProductionTableMigrations() []Migration {
     )`
 
 	var DefRelProductionProductTable = Migration{
-		Name: "Creat def_rel_production_product table",
+		Name: "Create def_rel_production_product table",
 		SQL:  defRelProductionProductSQL,
 	}
 	return []Migration{
