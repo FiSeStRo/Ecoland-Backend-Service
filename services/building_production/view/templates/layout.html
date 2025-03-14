@@ -296,7 +296,7 @@
           .value.split(",")
           .map((item) => {
             const splitItem = item.split(":");
-            const productId = splitItem[0];
+            const productId = parseInt(splitItem[0]);
             const amount = parseInt(splitItem[1]);
             return {
               productId,
@@ -308,8 +308,8 @@
           .value.split(",")
           .map((item) => {
             const splitItem = item.split(":");
-            const productId = splitItem[0];
-            const amount = splitItem[1];
+            const productId = parseInt(splitItem[0]);
+            const amount = parseInt(splitItem[1]);
             return {
               productId,
               amount,
