@@ -4,8 +4,8 @@ package model
 type Production struct {
 	ID         int          `json:"id"`
 	Name       string       `json:"name"`
-	InputType  []RelProduct `json:"inputType"`
-	OutputType []RelProduct `json:"outputType"`
+	InputType  []RelProduct `json:"inputs"`
+	OutputType []RelProduct `json:"outputs"`
 	Duration   int          `json:"duration"`
 	Cost       float64      `json:"cost"`
 }

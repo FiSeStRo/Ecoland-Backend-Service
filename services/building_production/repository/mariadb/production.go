@@ -93,5 +93,55 @@ func (r *productionRepository) GetDefProductions() ([]model.Production, error) {
 }
 
 func (r *productionRepository) CreateDefProduction(production model.Production) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to start transaction: %w", err)
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
+
+	defProducitonQuery := `INSERT INTO def_production(token_name, cost, base_duration) VALUES(?,?,?)`
+
+	defProductionResult, err := tx.Exec(defProducitonQuery, production.Name, production.Cost, production.Duration)
+	if err != nil {
+		return fmt.Errorf("failed to insert def production: %w", err)
+	}
+
+	defProductionID, err := defProductionResult.LastInsertId()
+	if err != nil {
+		return fmt.Errorf("failed to get last inserted ID: %w", err)
+	}
+
+	relationStmt, err := tx.Prepare(`INSERT INTO def_rel_production_product(production_id, product_id, is_input, amount) VALUES(?, ?, ?, ?)`)
+	if err != nil {
+		return fmt.Errorf("could not prepare production prodcut relation: %w", err)
+	}
+	defer relationStmt.Close()
+	if len(production.InputType) > 0 {
+		for _, input := range production.InputType {
+			_, err := relationStmt.Exec(defProductionID, input.ProductID, true, input.Amount)
+			if err != nil {
+				return fmt.Errorf("failed to insert product production reltaion (production_id: %d, product_id: %d): %w",
+					defProductionID, input.ProductID, err)
+			}
+		}
+	}
+	if len(production.OutputType) > 0 {
+		for _, output := range production.OutputType {
+			_, err := relationStmt.Exec(defProductionID, output.ProductID, false, output.Amount)
+			if err != nil {
+				return fmt.Errorf("failed to insert product production reltaion (production_id: %d, product_id: %d): %w",
+					defProductionID, output.ProductID, err)
+			}
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
 	return nil
 }

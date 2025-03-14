@@ -301,7 +301,6 @@
             return {
               productId,
               amount,
-              isInput: true,
             };
           });
         const outputs = document
@@ -314,7 +313,6 @@
             return {
               productId,
               amount,
-              isInput: false,
             };
           });
         const productionData = {
@@ -323,7 +321,8 @@
           duration: parseInt(
             document.getElementById("production-duration").value
           ),
-          products: [...inputs, ...outputs],
+          inputs,
+          outputs,
         };
         fetch("/api/production", {
           method: "POST",

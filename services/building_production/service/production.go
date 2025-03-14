@@ -25,6 +25,5 @@ func (s *productionService) GetProductions() ([]model.Production, error) {
 }
 
 func (s *productionService) NewProduction(production model.Production) error {
-
-	return nil
+	return s.productionRepository.CreateDefProduction(production)
 }

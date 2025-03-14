@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -76,4 +78,20 @@ func (c *ProductionController) Index(w http.ResponseWriter, req *http.Request) {
 // Add Productions handles the request to add a new production
 func (c *ProductionController) AddProduction(w http.ResponseWriter, req *http.Request) {
 	//TODO: implement Production flow
+
+	var production model.Production
+
+	if err := json.NewDecoder(req.Body).Decode(&production); err != nil {
+		log.Println("error reading from req.Body: %w", err)
+		http.Error(w, "error with the request body", http.StatusBadRequest)
+		return
+	}
+
+	if err := c.productionService.NewProduction(production); err != nil {
+		log.Println("error adding produciton: %w", err)
+		http.Error(w, "something went wrong", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }
