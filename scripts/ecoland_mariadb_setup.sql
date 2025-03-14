@@ -34,7 +34,7 @@ CREATE TABLE `def_buildings` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `token_name` VARCHAR(255) NOT NULL,
   `base_construction_cost` DECIMAL(10,2) NOT NULL,
-  `base_construction_time` INT NOT NULL COMMENT 'Time in minutes'
+  `base_construction_time` INT NOT NULL 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `def_product` (
@@ -47,7 +47,7 @@ CREATE TABLE `def_production` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `token_name` VARCHAR(255) NOT NULL,
   `cost` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-  `base_duration` INT NOT NULL COMMENT 'Time in minutes'
+  `base_duration` INT NOT NULL 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `def_rel_production_product` (

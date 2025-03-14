@@ -289,6 +289,61 @@
             alert("Failed to create building. Please try again.");
           });
       }
+
+      function creatProduction() {
+        const inputs = document
+          .getElementById("input-productions")
+          .value.split(",")
+          .map((item) => {
+            const splitItem = item.split(":");
+            const productId = parseInt(splitItem[0]);
+            const amount = parseInt(splitItem[1]);
+            return {
+              productId,
+              amount,
+            };
+          });
+        const outputs = document
+          .getElementById("output-productions")
+          .value.split(",")
+          .map((item) => {
+            const splitItem = item.split(":");
+            const productId = parseInt(splitItem[0]);
+            const amount = parseInt(splitItem[1]);
+            return {
+              productId,
+              amount,
+            };
+          });
+        const productionData = {
+          name: document.getElementById("production-name").value,
+          cost: parseFloat(document.getElementById("production-cost").value),
+          duration: parseInt(
+            document.getElementById("production-duration").value
+          ),
+          inputs,
+          outputs,
+        };
+        fetch("/api/production", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(productionData),
+        })
+          .then(() => {
+            closeModal("production");
+            {
+              {
+                /* window.location.reload(); */
+              }
+            }
+          })
+          .catch((error) => {
+            console.error("Error creating production:", error);
+            alert("Failed to create production. Please try again.");
+          });
+      }
     </script>
   </body>
 </html>

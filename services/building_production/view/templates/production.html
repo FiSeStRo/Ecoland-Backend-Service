@@ -8,12 +8,10 @@
       <tr>
         <th>ID</th>
         <th>Name</th>
-        <th>Description</th>
         <th>Input</th>
         <th>Output</th>
-        <th>Duration (min)</th>
+        <th>Duration</th>
         <th>Cost</th>
-        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -21,17 +19,56 @@
       <tr>
         <td>{{.ID}}</td>
         <td>{{.Name}}</td>
-        <td>{{.Description}}</td>
-        <td>{{.InputType}}</td>
-        <td>{{.OutputType}}</td>
+        <td>{{.InputText}}</td>
+        <td>{{.OutputText}}</td>
         <td>{{.Duration}}</td>
         <td>{{.Cost}}</td>
-        <td>
-          <a href="/production/view?id={{.ID}}" class="button">View</a>
-        </td>
       </tr>
       {{end}}
     </tbody>
   </table>
+  <button class="btn" onclick="openModal('production')">+ Add</button>
+  <dialog id="modal-production" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('production')">&times;</span>
+      <h2>Create Production</h2>
+      <form id="production-form">
+        <div style="margin-bottom: 10px">
+          <label
+            >Name: <input type="text" id="production-name" name="name" required
+          /></label>
+        </div>
+        <div style="margin-bottom: 10px">
+          <label
+            >Cost:
+            <input type="number" id="production-cost" name="Cost" required
+          /></label>
+        </div>
+        <div style="margin-bottom: 10px">
+          <label
+            >Duration:
+            <input
+              type="number"
+              id="production-duration"
+              name="duration"
+              required
+          /></label>
+        </div>
+        <div style="margin-bottom: 10px">
+          <label
+            >Input:
+            <input type="string" id="input-productions" name="input" required
+          /></label>
+        </div>
+        <div style="margin-bottom: 10px">
+          <label
+            >Output:
+            <input type="string" id="output-productions" name="output" required
+          /></label>
+        </div>
+        <button type="button" onclick="creatProduction()">Create</button>
+      </form>
+    </div>
+  </dialog>
 </div>
 {{end}}
