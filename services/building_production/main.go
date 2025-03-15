@@ -32,14 +32,16 @@ func main() {
 	}
 	buildingRepo := mariadb.NewBuildingRepository(db)
 	productionRepo := mariadb.NewProductionRepository(db)
+	productRepo := mariadb.NewProductRepository(db)
 
 	buildingService := service.NewBuildingService(buildingRepo)
 	productionService := service.NewProductionService(productionRepo)
+	productService := service.NewProductService(productRepo)
 
 	homeController := controller.NewHomeController(renderer)
 	buildingController := controller.NewBuildingController(renderer, buildingService)
 	productionController := controller.NewProductionController(renderer, productionService)
-	productController := controller.NewProductController(renderer)
+	productController := controller.NewProductController(renderer, productService)
 
 	mux := http.NewServeMux()
 
@@ -47,7 +49,7 @@ func main() {
 	mux.HandleFunc("/", homeController.Index)
 	buildingController.RegisterRoutes(mux)
 	productionController.RegisterRoutes(mux)
-	mux.HandleFunc("/product", productController.Index)
+	productController.RegisterRoutes(mux)
 
 	fs := http.FileServer(http.Dir("static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
