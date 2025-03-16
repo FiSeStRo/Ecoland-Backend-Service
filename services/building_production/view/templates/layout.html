@@ -333,15 +333,31 @@
         })
           .then(() => {
             closeModal("production");
-            {
-              {
-                /* window.location.reload(); */
-              }
-            }
+            window.location.reload();
           })
           .catch((error) => {
             console.error("Error creating production:", error);
             alert("Failed to create production. Please try again.");
+          });
+      }
+
+      function creatProduct() {
+
+      const productData = {
+      name: getElementById('product-name').value,
+      value: getElementById('product-value').value
+      };
+
+      fetch("/api/product", {
+      method: "POST",
+      headers:{
+      "Content-Type": "application/json",
+      }, body:JSON.stringify(productData),}).then(
+            closeModal("product");
+            window.location.reload();
+      ).catch((error) => {
+            console.error("Error creating production:", error);
+            alert("Failed to create product. Please try again.");
           });
       }
     </script>

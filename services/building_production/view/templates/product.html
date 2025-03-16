@@ -8,11 +8,7 @@
       <tr>
         <th>ID</th>
         <th>Name</th>
-        <th>Description</th>
         <th>Value</th>
-        <th>Weight</th>
-        <th>Category</th>
-        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -20,16 +16,31 @@
       <tr>
         <td>{{.ID}}</td>
         <td>{{.Name}}</td>
-        <td>{{.Description}}</td>
         <td>{{.Value}}</td>
-        <td>{{.Weight}}</td>
-        <td>{{.Category}}</td>
-        <td>
-          <a href="/product/view?id={{.ID}}" class="button">View</a>
-        </td>
       </tr>
       {{end}}
     </tbody>
   </table>
+  <button class="btn" onclick="openModal('product')">+ Add</button>
+  <div id="modal-building" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('product')">&times;</span>
+      <h2>Create Product</h2>
+      <form id="product-form">
+        <div style="margin-bottom: 10px">
+          <label
+            >Name: <input type="text" id="product-name" name="name" required
+          /></label>
+        </div>
+        <div style="margin-bottom: 10px">
+          <label
+            >Value:
+            <input type="number" id="product-value" name="baseValue" required
+          /></label>
+        </div>
+        <button type="button" onclick="createProduct()">Create</button>
+      </form>
+    </div>
+  </div>
 </div>
 {{end}}

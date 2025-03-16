@@ -41,5 +41,16 @@ func (r *productRepository) GetDefProducts() ([]model.Product, error) {
 }
 
 func (r *productRepository) CreateProduct(product model.Product) error {
+	defProductQuery := `INSERT INTO def_product(token_name, base_value) VALUES(?,?)`
+
+	result, err := r.db.Exec(defProductQuery, product.Name, product.Value)
+
+	if err != nil {
+		return fmt.Errorf("failed to insert new product: %w", err)
+	}
+
+	if id, err := result.LastInsertId(); id <= 0 || err != nil {
+		return fmt.Errorf("could not insert new product: %w", err)
+	}
 	return nil
 }
