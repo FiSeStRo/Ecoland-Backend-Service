@@ -16,6 +16,10 @@ func NewHomeController(renderer *view.TemplateRenderer) *HomeController {
 	}
 }
 
+func (c *HomeController) RegisterRoutes(mux *http.ServeMux) {
+	mux.HandleFunc("POST /config/storage", c.SaveToStorage)
+}
+
 func (c *HomeController) Index(w http.ResponseWriter, req *http.Request) {
 	if req.URL.Path != "/" {
 		http.NotFound(w, req)
@@ -27,4 +31,8 @@ func (c *HomeController) Index(w http.ResponseWriter, req *http.Request) {
 	}
 
 	c.renderer.Render(w, "home.html", data)
+}
+
+func (c *HomeController) SaveToStorage(w http.ResponseWriter, req *http.Request) {
+	return
 }

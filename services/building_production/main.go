@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"strconv"
@@ -12,7 +13,15 @@ import (
 	"github.com/FiSeStRo/Ecoland-Backend-Service/services/building_production/view"
 )
 
+var magrationFlag bool
+
+func init() {
+	flag.BoolVar(&magrationFlag, "migrate", false, "Run config migration")
+}
+
 func main() {
+
+	flag.Parse()
 
 	renderer, err := view.NewTemplateRenderer("view/templates")
 	if err != nil {
@@ -21,15 +30,17 @@ func main() {
 
 	dbConfig := database.NewConfig()
 
-	// Connect to database
 	db, err := database.Connect(dbConfig)
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}
 	defer db.Close()
-	if err = database.MigrateDefinitonData(db); err != nil {
-		log.Println("could not migrate Data:", err)
+	if magrationFlag {
+		if err = database.MigrateDefinitonData(db); err != nil {
+			log.Println("could not migrate Data:", err)
+		}
 	}
+
 	buildingRepo := mariadb.NewBuildingRepository(db)
 	productionRepo := mariadb.NewProductionRepository(db)
 	productRepo := mariadb.NewProductRepository(db)
