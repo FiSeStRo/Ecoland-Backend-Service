@@ -7,21 +7,38 @@ import (
 	"github.com/FiSeStRo/Ecoland-Backend-Service/services/building_production/model"
 )
 
+// BuildingRepository defines the interface for building data storage operations.
+// It provides methods for retrieving and creating building definitions.
 type BuildingRepository interface {
 	GetDefBuildings() ([]model.Building, error)
 	CreateDefBuilding(building model.Building) error
 }
 
+// buildingRepository implements the BuildingRepository interface
 type buildingRepository struct {
 	db *sql.DB
 }
 
+// NewBuildingRepository creates a new building repository with the provided database connection.
+//
+// Parameters:
+//   - db: A valid SQL database connection to MariaDB
+//
+// Returns:
+//   - A pointer to a buildingRepository that implements the BuildingRepository interface
 func NewBuildingRepository(db *sql.DB) *buildingRepository {
 	return &buildingRepository{
 		db: db,
 	}
 }
 
+// GetDefBuildings retrieves all building definitions from the database.
+// It first queries basic building information, then retrieves and associates
+// production relationships in a second query for optimized database access.
+//
+// Returns:
+//   - A slice of Building models with their associated production IDs
+//   - An error if any database operations fail
 func (r *buildingRepository) GetDefBuildings() ([]model.Building, error) {
 	buildingsQuery := `
         SELECT id, token_name, base_construction_cost, base_construction_time 
@@ -84,6 +101,17 @@ func (r *buildingRepository) GetDefBuildings() ([]model.Building, error) {
 	return result, nil
 }
 
+// CreateDefBuilding creates a new building definition in the database.
+// It uses a transaction to ensure that both the building and its production
+// relationships are created atomically.
+//
+// Parameters:
+//   - building: The Building model containing the building definition data and production IDs
+//
+// Returns:
+//   - An error if the database operation fails at any point
+//
+// The function will automatically roll back the transaction if any step fails.
 func (r *buildingRepository) CreateDefBuilding(building model.Building) error {
 	tx, err := r.db.Begin()
 	if err != nil {
