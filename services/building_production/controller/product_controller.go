@@ -29,7 +29,7 @@ func (c *ProductController) Index(w http.ResponseWriter, r *http.Request) {
 	products, err := c.productService.GetDefProducts()
 
 	if err != nil {
-		log.Println("could not ger products")
+		log.Println("could not get products")
 		http.Error(w, "error getting products", http.StatusInternalServerError)
 		return
 	}
@@ -48,6 +48,7 @@ func (c *ProductController) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST api/product", c.NewProduct)
 }
 
+// NewProduct controls the request of creating a new product
 func (c *ProductController) NewProduct(w http.ResponseWriter, req *http.Request) {
 
 	var product model.Product
@@ -58,10 +59,10 @@ func (c *ProductController) NewProduct(w http.ResponseWriter, req *http.Request)
 		return
 	}
 
-	//TODO: decode data
-	//TODO: add service
-	//TODO: Return response if created
-}
+	if err := c.productService.AddProduct(product); err != nil {
+		http.Error(w, "error adding product to database", http.StatusInternalServerError)
+		return
+	}
 
-//TODO: add product repository to getProducts and add a Product
-//TODO: add the addProduct Controller funct and registerRoutes
+	w.WriteHeader(http.StatusCreated)
+}
