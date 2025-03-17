@@ -441,7 +441,7 @@ func MigrateDefinitonData(db *sql.DB) error {
 	for _, product := range defProducts {
 		_, err := tx.Exec(productQuery, product.Name, product.Value)
 		if err != nil {
-			return fmt.Errorf("failes to insert products %w", err)
+			return fmt.Errorf("failed to insert products %w", err)
 		}
 	}
 
