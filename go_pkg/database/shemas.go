@@ -21,3 +21,9 @@ type DefRelProductionProduct struct {
 	IsInput      bool `json:"is_input"`
 	Amount       int  `json:"amount"`
 }
+
+type DefProduct struct {
+	ID    int    `json:"id"`
+	Name  string `json:"token_name"`
+	Value int    `json:"base_value"`
+}

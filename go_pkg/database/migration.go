@@ -421,6 +421,34 @@ func MigrateDefinitonData(db *sql.DB) error {
 			return fmt.Errorf("failed to commit transaction: %w", err)
 		}
 	}
+
+	defProducts, err := config.LoadJsonDataFromFileStorage[[]DefProduct]("def_product.json")
+	if err != nil {
+		return fmt.Errorf("Could not load def_product.json : %w", err)
+	}
+	productQuery := `INSERT INTO def_product(token_name, base_value) VALUE(?, ?)`
+	tx, err := db.Begin()
+	if err != nil {
+		return fmt.Errorf("faield to begin transaction: %w", err)
+	}
+
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
+
+	for _, product := range defProducts {
+		_, err := tx.Exec(productQuery, product.Name, product.Value)
+		if err != nil {
+			return fmt.Errorf("failes to insert products %w", err)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
 	if _, err := db.Exec("SET FOREIGN_KEY_CHECKS=1"); err != nil {
 		return fmt.Errorf("could not enable foreign key checks: %w", err)
 	}
