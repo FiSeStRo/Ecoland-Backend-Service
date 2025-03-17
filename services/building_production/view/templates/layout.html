@@ -178,6 +178,10 @@
         cursor: pointer;
         font-size: 18px;
       }
+      .contentWrapper {
+        display: flex;
+        flex-direction: column;
+      }
     </style>
   </head>
   <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -342,22 +346,38 @@
       }
 
       function creatProduct() {
+        const productData = {
+          name: getElementById("product-name").value,
+          value: getElementById("product-value").value,
+        };
 
-      const productData = {
-      name: getElementById('product-name').value,
-      value: getElementById('product-value').value
-      };
-
-      fetch("/api/product", {
-      method: "POST",
-      headers:{
-      "Content-Type": "application/json",
-      }, body:JSON.stringify(productData),}).then(
+        fetch("/api/product", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(productData),
+        })
+          .then(() => {
             closeModal("product");
             window.location.reload();
-      ).catch((error) => {
+          })
+          .catch((error) => {
             console.error("Error creating production:", error);
             alert("Failed to create product. Please try again.");
+          });
+      }
+
+      function saveFiles() {
+        fetch("/config/storage", {
+          method: "POST",
+        })
+          .then(() => {
+            alert("succesfully saved files");
+          })
+          .catch((error) => {
+            console.error("Error saving Files:", error);
+            alert("Failed to save files");
           });
       }
     </script>

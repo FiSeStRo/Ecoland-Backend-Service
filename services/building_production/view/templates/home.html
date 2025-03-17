@@ -1,107 +1,84 @@
 {{define "content"}}
-<div class="containerContent">
-  <!-- Buildings -->
-  <div class="column">
-    <h2>Buildings</h2>
-    <ul>
-      <li
-        id="building-A"
-        data-productions="production-1,production-2"
-        data-products="product-1,product-2"
-        onclick="highlightAssociations(this)"
-      >
-        Building A
-      </li>
-      <li
-        id="building-B"
-        data-productions="production-2"
-        data-products="product-3"
-        onclick="highlightAssociations(this)"
-      >
-        Building B
-      </li>
-    </ul>
-  </div>
+<div class="contentWrapper">
+  <button onclick="saveFiles()">Save Files</button>
+  <div class="containerContent">
+    <div>
+      <!-- Buildings -->
+      <div class="column">
+        <h2>Buildings</h2>
+        <ul>
+          <li
+            id="building-A"
+            data-productions="production-1,production-2"
+            data-products="product-1,product-2"
+            onclick="highlightAssociations(this)"
+          >
+            Building A
+          </li>
+          <li
+            id="building-B"
+            data-productions="production-2"
+            data-products="product-3"
+            onclick="highlightAssociations(this)"
+          >
+            Building B
+          </li>
+        </ul>
+      </div>
 
-  <!-- Productions -->
-  <div class="column">
-    <h2>Productions</h2>
-    <ul>
-      <li
-        id="production-1"
-        data-buildings="building-A"
-        data-products="product-1"
-        onclick="highlightAssociations(this)"
-      >
-        Production 1
-      </li>
-      <li
-        id="production-2"
-        data-buildings="building-A,building-B"
-        data-products="product-2"
-        onclick="highlightAssociations(this)"
-      >
-        Production 2
-      </li>
-    </ul>
-  </div>
+      <!-- Productions -->
+      <div class="column">
+        <h2>Productions</h2>
+        <ul>
+          <li
+            id="production-1"
+            data-buildings="building-A"
+            data-products="product-1"
+            onclick="highlightAssociations(this)"
+          >
+            Production 1
+          </li>
+          <li
+            id="production-2"
+            data-buildings="building-A,building-B"
+            data-products="product-2"
+            onclick="highlightAssociations(this)"
+          >
+            Production 2
+          </li>
+        </ul>
+      </div>
 
-  <!-- Products -->
-  <div class="column">
-    <h2>Products</h2>
-    <ul>
-      <li
-        id="product-1"
-        data-buildings="building-A"
-        data-productions="production-1"
-        onclick="highlightAssociations(this)"
-      >
-        Product 1
-      </li>
-      <li
-        id="product-2"
-        data-buildings="building-A"
-        data-productions="production-2"
-        onclick="highlightAssociations(this)"
-      >
-        Product 2
-      </li>
-      <li
-        id="product-3"
-        data-buildings="building-B"
-        onclick="highlightAssociations(this)"
-      >
-        Product 3
-      </li>
-    </ul>
+      <!-- Products -->
+      <div class="column">
+        <h2>Products</h2>
+        <ul>
+          <li
+            id="product-1"
+            data-buildings="building-A"
+            data-productions="production-1"
+            onclick="highlightAssociations(this)"
+          >
+            Product 1
+          </li>
+          <li
+            id="product-2"
+            data-buildings="building-A"
+            data-productions="production-2"
+            onclick="highlightAssociations(this)"
+          >
+            Product 2
+          </li>
+          <li
+            id="product-3"
+            data-buildings="building-B"
+            onclick="highlightAssociations(this)"
+          >
+            Product 3
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
+  {{end}}
 </div>
-
-<!-- Modal Structure -->
-<div id="modal-building" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal('building')">&times;</span>
-    <h2>Create Building</h2>
-    <label>Name: <input type="text" /></label><br /><br />
-    <button onclick="closeModal('building')">Create</button>
-  </div>
-</div>
-
-<div id="modal-production" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal('production')">&times;</span>
-    <h2>Create Production</h2>
-    <label>Name: <input type="text" /></label><br /><br />
-    <button onclick="closeModal('production')">Create</button>
-  </div>
-</div>
-
-<div id="modal-product" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal('product')">&times;</span>
-    <h2>Create Product</h2>
-    <label>Name: <input type="text" /></label><br /><br />
-    <button onclick="closeModal('product')">Create</button>
-  </div>
-</div>
-{{end}}
