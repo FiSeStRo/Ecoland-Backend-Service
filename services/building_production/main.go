@@ -48,8 +48,9 @@ func main() {
 	buildingService := service.NewBuildingService(buildingRepo)
 	productionService := service.NewProductionService(productionRepo)
 	productService := service.NewProductService(productRepo)
+	homeService := service.NewHomeService(buildingRepo, productionRepo, productRepo)
 
-	homeController := controller.NewHomeController(renderer)
+	homeController := controller.NewHomeController(renderer, homeService)
 	buildingController := controller.NewBuildingController(renderer, buildingService)
 	productionController := controller.NewProductionController(renderer, productionService)
 	productController := controller.NewProductController(renderer, productService)
@@ -57,7 +58,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Register routes
-	mux.HandleFunc("/", homeController.Index)
+	homeController.RegisterRoutes(mux)
 	buildingController.RegisterRoutes(mux)
 	productionController.RegisterRoutes(mux)
 	productController.RegisterRoutes(mux)

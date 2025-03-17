@@ -1,6 +1,12 @@
 package service
 
-import "github.com/FiSeStRo/Ecoland-Backend-Service/services/building_production/repository/mariadb"
+import (
+	"fmt"
+	"path/filepath"
+
+	"github.com/FiSeStRo/Ecoland-Backend-Service/go_pkg/config"
+	"github.com/FiSeStRo/Ecoland-Backend-Service/services/building_production/repository/mariadb"
+)
 
 type HomeService interface {
 	SaveToStorage() error
@@ -21,9 +27,34 @@ func NewHomeService(buildingRepo mariadb.BuildingRepository, productionRepo mari
 }
 
 func (s *homeService) SaveToStorage() error {
+	storageDir := "../../file_storage"
 
-	//TODO: get Data from repos
+	buildings, err := s.buildingRepo.GetDefBuildings()
 
-	//TODO: save Data to json
+	if err != nil {
+		return fmt.Errorf("couldn't get buildings: %w", err)
+	}
+	productions, err := s.productionRepo.GetDefProductions()
+
+	if err != nil {
+		return fmt.Errorf("could not get productions: %w", err)
+	}
+	products, err := s.productRepo.GetDefProducts()
+
+	if err != nil {
+		return fmt.Errorf("could not get products: %w", err)
+	}
+
+	if err := config.WriteJSONFile(filepath.Join(storageDir, "def_buildings.json"), buildings); err != nil {
+		return fmt.Errorf("failed to save buildings: %w", err)
+	}
+
+	if err := config.WriteJSONFile(filepath.Join(storageDir, "def_production.json"), productions); err != nil {
+		return fmt.Errorf("failed to save productions: %w", err)
+	}
+
+	if err := config.WriteJSONFile(filepath.Join(storageDir, "def_products.json"), products); err != nil {
+		return fmt.Errorf("failed to save products: %w", err)
+	}
 	return nil
 }
