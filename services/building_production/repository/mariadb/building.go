@@ -12,6 +12,7 @@ import (
 type BuildingRepository interface {
 	GetDefBuildings() ([]model.Building, error)
 	CreateDefBuilding(building model.Building) error
+	GetBuildingIDByProductionID(ID int) ([]int, error)
 }
 
 // buildingRepository implements the BuildingRepository interface
@@ -154,4 +155,22 @@ func (r *buildingRepository) CreateDefBuilding(building model.Building) error {
 	}
 
 	return nil
+}
+
+func (r *buildingRepository) GetBuildingIDByProductionID(ID int) ([]int, error) {
+	query := `SELECT building_id FROM def_rel_building_production WHERE production_id = ?`
+
+	rows, err := r.db.Query(query, ID)
+	if err != nil {
+		return nil, fmt.Errorf("could not get buildings by production id : %w", err)
+	}
+	var buidlingsID []int
+	for rows.Next() {
+		var buildingID int
+		if err := rows.Scan(&buildingID); err != nil {
+			return nil, fmt.Errorf("could not save buildings by production id : %w", err)
+		}
+		buidlingsID = append(buidlingsID, buildingID)
+	}
+	return buidlingsID, nil
 }
