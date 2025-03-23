@@ -63,7 +63,7 @@ func main() {
 	productionController.RegisterRoutes(mux)
 	productController.RegisterRoutes(mux)
 
-	fs := http.FileServer(http.Dir("static"))
+	fs := http.FileServer(http.Dir("view/static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	const port = 8082

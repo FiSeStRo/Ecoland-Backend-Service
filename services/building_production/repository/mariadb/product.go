@@ -22,7 +22,7 @@ func NewProductRepository(db *sql.DB) ProductRepository {
 
 func (r *productRepository) GetDefProducts() ([]model.Product, error) {
 
-	defProductQuery := `SELECT * FROM def_product`
+	defProductQuery := `SELECT id, token_name, base_value FROM def_product`
 
 	rows, err := r.db.Query(defProductQuery)
 	if err != nil {

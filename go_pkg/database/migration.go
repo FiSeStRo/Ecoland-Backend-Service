@@ -422,7 +422,7 @@ func MigrateDefinitonData(db *sql.DB) error {
 		}
 	}
 
-	defProducts, err := config.LoadJsonDataFromFileStorage[[]DefProduct]("def_product.json")
+	defProducts, err := config.LoadJsonDataFromFileStorage[[]DefProduct]("def_products.json")
 	if err != nil {
 		return fmt.Errorf("Could not load def_product.json : %w", err)
 	}

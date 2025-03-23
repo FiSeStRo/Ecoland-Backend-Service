@@ -10,6 +10,7 @@ import (
 type ProductionRepository interface {
 	GetDefProductions() ([]model.Production, error)
 	CreateDefProduction(production model.Production) error
+	GetProductionByProductID(productID int) ([]int, error)
 }
 
 type productionRepository struct {
@@ -144,4 +145,21 @@ func (r *productionRepository) CreateDefProduction(production model.Production) 
 	}
 
 	return nil
+}
+
+func (r *productionRepository) GetProductionByProductID(productID int) ([]int, error) {
+	query := `SELECT production_id FROM def_rel_production_product WHERE product_id = ?`
+	rows, err := r.db.Query(query, productID)
+	if err != nil {
+		return nil, fmt.Errorf("could not get production IDs: %w", err)
+	}
+	var productionIDs []int
+	for rows.Next() {
+		var productionID int
+		if err := rows.Scan(&productionID); err != nil {
+			return nil, fmt.Errorf("could not read production IDs: %w", err)
+		}
+		productionIDs = append(productionIDs, productionID)
+	}
+	return productionIDs, nil
 }

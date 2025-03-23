@@ -31,8 +31,17 @@ func (c *HomeController) Index(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	items, err := c.homeService.GetOverview()
+	if err != nil {
+		log.Println("error in homes service", err)
+		http.Error(w, "could not get items", http.StatusInternalServerError)
+		return
+	}
 	data := map[string]any{
-		"Title": "Building Production System",
+		"Title":       "Building Production System",
+		"Buildings":   items.Buildings,
+		"Productions": items.Productions,
+		"Products":    items.Products,
 	}
 
 	c.renderer.Render(w, "home.html", data)
