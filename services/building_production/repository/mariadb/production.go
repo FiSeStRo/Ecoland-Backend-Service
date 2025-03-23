@@ -151,7 +151,7 @@ func (r *productionRepository) GetProductionByProductID(productID int) ([]int, e
 	query := `SELECT production_id FROM def_rel_production_product WHERE product_id = ?`
 	rows, err := r.db.Query(query, productID)
 	if err != nil {
-
+		return nil, fmt.Errorf("could not get production IDs: %w", err)
 	}
 	var productionIDs []int
 	for rows.Next() {

@@ -164,13 +164,13 @@ func (r *buildingRepository) GetBuildingIDByProductionID(ID int) ([]int, error) 
 	if err != nil {
 		return nil, fmt.Errorf("could not get buildings by production id : %w", err)
 	}
-	var buidlingsID []int
+	var buildingsID []int
 	for rows.Next() {
 		var buildingID int
 		if err := rows.Scan(&buildingID); err != nil {
 			return nil, fmt.Errorf("could not save buildings by production id : %w", err)
 		}
-		buidlingsID = append(buidlingsID, buildingID)
+		buildingsID = append(buildingsID, buildingID)
 	}
-	return buidlingsID, nil
+	return buildingsID, nil
 }

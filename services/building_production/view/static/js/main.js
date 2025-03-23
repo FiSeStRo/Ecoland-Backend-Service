@@ -169,7 +169,7 @@ function openModal(type) {
       method: "POST",
     })
       .then(() => {
-        alert("succesfully saved files");
+        alert("successfully saved files");
       })
       .catch((error) => {
         console.error("Error saving Files:", error);
