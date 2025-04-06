@@ -1,0 +1,80 @@
+{{define "content"}}
+<div class="card">
+  <h1>User Management</h1>
+  <p>View and manage all users in the system.</p>
+
+  <div class="table-container">
+    <table id="users-table" class="data-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>ID</th>
+          <th>Email</th>
+          <th>Money</th>
+          <th>Prestige</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Users}}
+        <tr data-user-id="{{.ID}}">
+          <td>
+            <span class="editable-field">{{.Username}}</span>
+            <button
+              class="edit-btn"
+              onclick="makeEditable(this)"
+              title="Edit Username"
+            >
+              <i class="fas fa-pencil-alt"></i>
+            </button>
+          </td>
+          <td>
+            <span class="editable-field">{{.ID}}</span>
+          </td>
+
+          <td>
+            <span class="editable-field">{{.Email}}</span>
+            <button
+              class="edit-btn"
+              onclick="makeEditable(this)"
+              title="Edit Email"
+            >
+              <i class="fas fa-pencil-alt"></i>
+            </button>
+          </td>
+          <td>
+            <span class="editable-field">{{.Money}}</span>
+            <button
+              class="edit-btn"
+              onclick="makeEditable(this)"
+              title="Edit Money"
+            >
+              <i class="fas fa-pencil-alt"></i>
+            </button>
+          </td>
+          <td>
+            <span class="editable-field">{{.Prestige}}</span>
+            <button
+              class="edit-btn"
+              onclick="makeEditable(this)"
+              title="Edit Prestige"
+            >
+              <i class="fas fa-pencil-alt"></i>
+            </button>
+          </td>
+          <td>
+            <button
+              class="reset-btn"
+              onclick="resetPassword('{{.ID}}')"
+              title="Reset Password"
+            >
+              Reset Password
+            </button>
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{end}}

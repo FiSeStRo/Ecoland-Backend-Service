@@ -1,0 +1,26 @@
+\templates\layout.html --> {{define "layout"}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User-management</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="/static/css/styles.css" />
+  </head>
+  <body class="bg-gray-100 min-h-screen flex flex-col">
+    <header>
+      <div class="container">
+        <h1>User-management</h1>
+      </div>
+    </header>
+    <main class="container">{{block "content" .}}{{end}}</main>
+
+    <script src="/static/js/main.js"></script>
+  </body>
+</html>
+{{end}}

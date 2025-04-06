@@ -40,7 +40,7 @@ func NewTemplateRenderer(templateDir string) (*TemplateRenderer, error) {
 }
 
 // Render renders a template with the provided data
-func (tr *TemplateRenderer) Render(w http.ResponseWriter, name string, data interface{}) {
+func (tr *TemplateRenderer) Render(w http.ResponseWriter, name string, data any) {
 	tmpl, ok := tr.templates[name]
 	if !ok {
 		http.Error(w, fmt.Sprintf("Template %s not found", name), http.StatusInternalServerError)
