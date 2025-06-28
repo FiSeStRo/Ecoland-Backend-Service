@@ -12,7 +12,7 @@ from features.users.schemas import CreateUser
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
-router = APIRouter(prefix="users", tags=["users"])
+router = APIRouter(prefix="/users", tags=["users"])
 
 def get_db():
     db =SessionLocal()
@@ -23,7 +23,7 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
-@router.post("create", status_code=status.HTTP_201_CREATED)
+@router.post("/create", status_code=status.HTTP_201_CREATED)
 async def create_new_user(body: CreateUser, db: db_dependency):
 
     user_model = Users(
