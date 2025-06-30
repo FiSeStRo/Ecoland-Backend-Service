@@ -1,6 +1,24 @@
-from fastapi import APIRouter
+
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from database.db import SessionLocal
+from features.buildings.models import DefBuildings, Buildings
+from features.buildings.shemas import ConstructBuildingRequest
 
 router = APIRouter()
+
+def get_db():
+    db =SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+db_dependency = Annotated[Session, Depends(get_db)]
+
 @router.get("/list")
 async def get_all_buildings():
     return "Get all buildings"
@@ -18,5 +36,17 @@ async def get_productions(building_id: int):
     return "Get productions"
 
 @router.post("/construct")
-async def construct_building():
-    return "Construct building"
+async def construct_building(body: ConstructBuildingRequest, db: db_dependency):
+
+    if db.query(DefBuildings).filter(DefBuildings.id == body.def_id).first() is None:
+        raise HTTPException(status_code=404, detail=f"Could not find building with def_id of {body.def_id}")
+
+    building = Buildings(
+        user_id = 1,
+        def_id = body.def_id,
+        name = body.display_nane
+    )
+
+    db.add(building)
+    db.commit()
+    return

@@ -34,4 +34,9 @@ async def create_new_user(body: CreateUser, db: db_dependency):
     )
     db.add(user_model)
     db.commit()
+    return
 
+# TODO: This should only be reachable for admin accounts
+@router.get("/all")
+async def get_all_users(db: db_dependency):
+    return db.query("users").all()
